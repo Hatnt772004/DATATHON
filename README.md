@@ -16,7 +16,7 @@ pip install pandas numpy matplotlib statsmodels lightgbm xgboost prophet scikit-
 
 📁 dataset/
    
-   └── sales.csv                   # File dữ liệu đầu vào gốc cho mô hình học máy
+   └── sales.csv, customers.csv, orders.csv...   # File dữ liệu 
 
 📁 output/                        # Thư mục chứa toàn bộ kết quả đầu ra của Machine Learning
    
@@ -34,17 +34,13 @@ pip install pandas numpy matplotlib statsmodels lightgbm xgboost prophet scikit-
    
    └── *.png                      # Các biểu đồ EDA, đánh giá metrics, walk-forward
 
+📄 Part1.ipynb     # Trả lời 10 câu hỏi trắc nghiệm
 
-📁 Part 1 & 2/                    # Thư mục giải quyết các yêu cầu kinh doanh của cuộc thi
+📄 Part2.html      # Hệ thống Business Intelligence Dashboard
 
-   ├── customers.csv, orders.csv... # Các file dữ liệu phục vụ cho truy vấn và phân tích
+📄 Part3.ipynb                      # Pipeline Machine Learning dự báo chuỗi thời gian
 
-   ├── part1.ipynb                # Script giải quyết 10 câu hỏi Multiple Choice bằng Pandas/Numpy
-
-   └── dashboard for part2.html   # Master Dashboard tương tác toàn diện (HTML/CSS/JS)
-
-
-📄 BFF.ipynb                      # Pipeline Machine Learning dự báo chuỗi thời gian
+📄 submission.csv        # File kết quả dự báo doanh thu 2023-2024
 
 📄 README.md                      # Tài liệu hướng dẫn dự án (File này)
 
@@ -55,6 +51,7 @@ Part 1 — Truy vấn & thống kê (part1.ipynb): Sử dụng pandas và numpy 
 
 Part 2 — Master Dashboard (dashboard for part2.html): Một hệ thống báo cáo BI (Business Intelligence) tĩnh nhưng có tính tương tác cao được xây dựng trực tiếp bằng HTML và Chart.js. Dashboard bao gồm 8 phân hệ chuyên sâu: Overview, Revenue, Web Traffic, Customers, Profitability, Returns, Inventory, và Operations. Tính năng nổi bật bao gồm P&L Waterfall, phân tích phân tán lợi nhuận (Scatter), và Ma trận sức khỏe hàng tồn kho (Inventory Health Matrix).
 
+### Xây dựng mô hình dự báo doanh thu (Part 3)
 
 ### Kiến Trúc Pipeline (6 Giai Đoạn)
 Mã nguồn được chia thành 6 giai đoạn:
@@ -76,10 +73,10 @@ Interaction Features: Tương tác giữa các biến độ trễ, biến rollin
 
 - Giai đoạn 6: Giải thích mô hình với SHAP: sử dụng TreeExplainer và LinearExplainer để tính giá trị SHAP cho từng mô hình thành viên, tính toán ma trận SHAP tổng hợp (Ensemble SHAP) dựa trên trọng số của từng mô hình, xuất các biểu đồ phân tích.
 
-## 📊 Hiệu suất và đánh giá (Metrics)
+### 📊 Hiệu suất và đánh giá (Metrics)
 Hệ thống sử dụng các thang đo tiêu chuẩn trong kinh tế lượng và học máy: MAPE, RMSE, MAE, R² 
 
-## 💡 Cấu hình tham số chính (Configuration)
+### 💡 Cấu hình tham số chính (Configuration)
 Bạn có thể thay đổi các biến toàn cục ở đầu script để điều chỉnh hành vi của pipeline:
 - DATA_PATH: Đường dẫn file dữ liệu.
 - TRAIN_END, VAL_START, VAL_END, TEST_START, TEST_END: Các mốc thời gian chia tập dữ liệu.
@@ -88,19 +85,15 @@ Bạn có thể thay đổi các biến toàn cục ở đầu script để đi�
 
 ## 📌 Hướng dẫn sử dụng
 
-1. Chạy Script Phân Tích (Part 1)
-Mở file Part 1 & 2/part1.ipynb bằng Jupyter Notebook hoặc VS Code. 
+Đảm bảo các file dữ liệu CSV (customers.csv, orders.csv...) nằm cùng một thư mục với file .ipynb và .html. 
 
-Đảm bảo các file dữ liệu CSV (customers.csv, orders.csv...) nằm cùng một thư mục với file .ipynb. 
-
-Chạy toàn bộ các cell (Run All) để xem kết quả trích xuất dữ liệu cho 10 câu hỏi của cuộc thi.
+1. Chạy Script phân Tích (Part 1)
+Mở file Part1.ipynb và chạy toàn bộ các cell (Run All) để xem kết quả trích xuất dữ liệu cho 10 câu hỏi của cuộc thi.
 
 2. Xem Business Dashboard (Part 2)
-Truy cập vào thư mục Part 1 & 2/. Nhấp đúp chuột vào file dashboard for part2.html để mở bằng trình duyệt web của bạn, hoặc click chuột phải trong VS Code và chọn Open with Live Server.
+Nhấp đúp chuột vào Part2.html để mở bằng trình duyệt web của bạn, hoặc click chuột phải trong VS Code và chọn Open with Live Server.
 
 3. Chạy Pipeline dự Báo học Máy
-Đặt file dữ liệu bán hàng vào thư mục dataset/ và đảm bảo tên là sales.csv (File cần có ít nhất cột Date, Revenue, COGS). 
-
-Mở và chạy file BFF.ipynb.
+Mở file Part3.ipynb và chạy toàn bộ các cell (Run All)
 
 Mở thư mục output/ để xem toàn bộ biểu đồ phân tích, tệp cấu hình JSON, báo cáo PDF, và tệp dự báo predictions_2023_2024.csv.
