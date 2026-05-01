@@ -1,0 +1,61 @@
+{
+  "best_model": "Ensemble",
+  "best_score": 21.91,
+  "best_mean_mape": 20.6,
+  "best_std_mape": 2.61,
+  "stability_table": [
+    {
+      "Model": "Ensemble",
+      "Mean MAPE": 20.6,
+      "Std MAPE": 2.61,
+      "Worst MAPE": 25.81,
+      "Best MAPE": 17.98,
+      "Fold5 MAPE (2020)": 19.68,
+      "Mean RMSE": 0.0,
+      "Score": 21.91
+    },
+    {
+      "Model": "XGBoost",
+      "Mean MAPE": 21.15,
+      "Std MAPE": 2.26,
+      "Worst MAPE": 25.64,
+      "Best MAPE": 18.56,
+      "Fold5 MAPE (2020)": 21.23,
+      "Mean RMSE": 1017206.0,
+      "Score": 22.28
+    },
+    {
+      "Model": "LightGBM",
+      "Mean MAPE": 21.28,
+      "Std MAPE": 2.42,
+      "Worst MAPE": 25.96,
+      "Best MAPE": 18.09,
+      "Fold5 MAPE (2020)": 21.66,
+      "Mean RMSE": 1019687.0,
+      "Score": 22.49
+    },
+    {
+      "Model": "Ridge",
+      "Mean MAPE": 24.57,
+      "Std MAPE": 3.83,
+      "Worst MAPE": 32.09,
+      "Best MAPE": 20.31,
+      "Fold5 MAPE (2020)": 25.16,
+      "Mean RMSE": 1147737.0,
+      "Score": 26.48
+    }
+  ],
+  "folds": [
+    "Fold 1",
+    "Fold 2",
+    "Fold 3",
+    "Fold 4",
+    "Fold 5 ⚡",
+    "Fold 6"
+  ],
+  "ensemble_weights": {
+    "XGBoost": 0.3502998940557242,
+    "LightGBM": 0.3481599041014363,
+    "Ridge": 0.3015402018428395
+  }
+}

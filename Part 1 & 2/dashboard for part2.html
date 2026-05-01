@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>VinDatathon 2026 — Master Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+/* V4 LUXURIOUS DARK THEME */
+:root{
+  --bg:#111318;--s1:#1A1D24;--s2:#232730;--s3:#2C313C;
+  --bd:#2D3342;--bd2:#3E465A;
+  --c-gold:#D4AF37; --c-gold-l:rgba(212,175,55,.15);
+  --c-teal:#0D9488; --c-teal-l:rgba(13,148,136,.15);
+  --c-rose:#E11D48; --c-rose-l:rgba(225,29,72,.15);
+  --c-navy:#3B82F6; --c-navy-l:rgba(59,130,246,.15);
+  --text:#F3F4F6;--soft:#9CA3AF;--muted:#6B7280;
+  --font:'IBM Plex Sans',sans-serif;--mono:'IBM Plex Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13px}
+
+header{background:var(--s1);border-bottom:1px solid var(--bd);padding:0 26px;height:50px;
+  display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:300}
+.hlogo{display:flex;align-items:center;gap:9px}
+.hlogo svg{width:26px;height:26px}
+.hlt{font-size:14px;font-weight:700;color:var(--c-gold);letter-spacing:0.5px}
+.hls{font-size:10px;color:var(--muted);margin-top:1px;text-transform:uppercase;letter-spacing:1px}
+
+nav{background:var(--s1);border-bottom:1px solid var(--bd);padding:0 26px;display:flex;overflow-x:auto}
+nav::-webkit-scrollbar{display:none}
+.tab{padding:12px 16px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;
+  border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s;user-select:none;text-transform:uppercase;letter-spacing:0.5px}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--c-gold);border-bottom-color:var(--c-gold)}
+
+main{padding:20px 26px;max-width:1500px;margin:0 auto}
+.section{display:none}
+.section.active{display:block;animation:fu .3s ease}
+@keyframes fu{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+
+.krow{display:grid;gap:12px;margin-bottom:16px}
+.k6{grid-template-columns:repeat(6,1fr)}
+.k4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:1100px){.k6{grid-template-columns:repeat(3,1fr)}.k4{grid-template-columns:repeat(2,1fr)}}
+.kpi{background:var(--s1);border:1px solid var(--bd);border-radius:8px;padding:14px 16px;
+  position:relative;overflow:hidden;transition:border-color .15s}
+.kpi:hover{border-color:var(--kc,var(--c-gold))}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--kc,var(--c-gold))}
+.kl{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+.kv{font-size:20px;font-weight:700;font-family:var(--mono);line-height:1}
+.ks{font-size:10px;color:var(--muted);margin-top:5px}
+
+.grid{display:grid;gap:14px;margin-bottom:14px}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:1fr 1fr 1fr}
+.g21{grid-template-columns:2.2fr 1fr}
+@media(max-width:960px){.grid{grid-template-columns:1fr}}
+
+.card{background:var(--s1);border:1px solid var(--bd);border-radius:8px;padding:16px}
+.chd{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.ct{font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px}
+.cs{font-size:11px;color:var(--muted);line-height:1.4}
+.cw{position:relative;width:100%}
+
+.hb{display:flex;flex-direction:column;gap:8px}
+.hbi{display:flex;flex-direction:column;gap:4px}
+.hbr{display:flex;justify-content:space-between;font-size:11px}
+.hbl{color:var(--soft)}
+.hbv{color:var(--text);font-weight:600;font-family:var(--mono)}
+.hbt{height:6px;background:var(--s2);border-radius:3px;overflow:hidden}
+.hbf{height:100%;border-radius:3px;transition:width .6s cubic-bezier(.4,0,.2,1)}
+
+.fbar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.fl{font-size:11px;color:var(--muted);font-weight:600}
+.fbtn{padding:4px 12px;border-radius:4px;font-size:11px;font-family:var(--font);
+  font-weight:600;border:1px solid var(--bd);background:transparent;color:var(--muted);
+  cursor:pointer;transition:all .15s}
+.fbtn:hover{border-color:var(--c-gold);color:var(--c-gold)}
+.fbtn.on{background:var(--c-gold-l);border-color:var(--c-gold);color:var(--c-gold)}
+
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;
+  padding:8px;text-align:left;border-bottom:1px solid var(--bd)}
+.tbl td{font-size:11px;padding:8px;border-bottom:1px solid rgba(45,51,66,.4);color:var(--soft);font-family:var(--mono)}
+.tbl td.nm{color:var(--text);font-family:var(--font);font-weight:600}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:var(--s2)}
+.pos{color:#5EEAD4}.neg{color:#FDA4AF}
+
+.wf{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.wfi{display:flex;align-items:center;gap:10px}
+.wfl{font-size:11px;color:var(--soft);width:110px;flex-shrink:0;text-align:right}
+.wfb{height:24px;border-radius:4px;display:flex;align-items:center;padding:0 10px;font-size:10px;font-weight:700;font-family:var(--mono);white-space:nowrap;min-width:60px}
+.wf-div{border-top:1px dashed var(--bd2);margin-top:4px;padding-top:8px}
+
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hlogo">
+    <svg viewBox="0 0 26 26" fill="none">
+      <rect width="26" height="26" rx="5" fill="#D4AF37" opacity=".15"/>
+      <rect x="4" y="13" width="4" height="9" rx="1.5" fill="#D4AF37"/>
+      <rect x="11" y="8" width="4" height="14" rx="1.5" fill="#D4AF37" opacity=".75"/>
+      <rect x="18" y="4" width="4" height="18" rx="1.5" fill="#D4AF37" opacity=".45"/>
+    </svg>
+    <div><div class="hlt">VINDATATHON 2026</div><div class="hls">High-Level Business Intelligence</div></div>
+  </div>
+</header>
+
+<nav>
+  <div class="tab active" onclick="go(0)">▦ Overview</div>
+  <div class="tab" onclick="go(1)">📈 Revenue</div>
+  <div class="tab" onclick="go(2)">🌐 Web Traffic</div>
+  <div class="tab" onclick="go(3)">👥 Customers</div>
+  <div class="tab" onclick="go(4)">💰 Profitability</div>
+  <div class="tab" onclick="go(5)">↩️ Returns</div>
+  <div class="tab" onclick="go(6)">📦 Inventory</div>
+  <div class="tab" onclick="go(7)">🎯 Promotions</div>
+  <div class="tab" onclick="go(8)">⚙️ Operations</div>
+</nav>
+
+<main>
+
+<!-- ══ 0 · OVERVIEW ══ -->
+<section class="section active" id="s0">
+  <div class="krow k6">
+    <div class="kpi" style="--kc:var(--c-gold)"><div class="kl">Total Revenue</div><div class="kv">16.43B</div><div class="ks">Million VND</div></div>
+    <div class="kpi" style="--kc:var(--c-teal)"><div class="kl">Gross Profit</div><div class="kv">2.267B</div><div class="ks">13.8% Margin</div></div>
+    <div class="kpi" style="--kc:var(--c-navy)"><div class="kl">Total Orders</div><div class="kv">646,945</div><div class="ks">Completed Transactions</div></div>
+    <div class="kpi" style="--kc:var(--c-teal)"><div class="kl">Customers</div><div class="kv">121,930</div><div class="ks">Registered Accounts</div></div>
+    <div class="kpi" style="--kc:var(--c-rose)"><div class="kl">Return Rate</div><div class="kv">5.6%</div><div class="ks">39,939 Records</div></div>
+    <div class="kpi" style="--kc:var(--c-gold)"><div class="kl">Avg Rating</div><div class="kv">3.94★</div><div class="ks">113,551 Reviews</div></div>
+  </div>
+  <div class="grid g21">
+    <div class="card">
+      <div class="chd"><div><div class="ct">Revenue & Gross Profit (Monthly)</div>
+        <div class="cs">Million VND · Dashed line = Full 126-Month Moving Average</div></div>
+      </div>
+      <div class="fbar">
+        <button class="fbtn on" id="b0" onclick="tgl(0)">Revenue</button>
+        <button class="fbtn on" id="b1" onclick="tgl(1)">Gross Profit</button>
+        <button class="fbtn on" id="b2" onclick="tgl(2)">MA-12</button>
+        <span class="fl" style="margin-left:10px; margin-right:4px;">Year:</span>
+        <button class="fbtn on" onclick="fyr('all',this)">All</button>
+        <button class="fbtn" onclick="fyr('2013',this)">2013</button>
+        <button class="fbtn" onclick="fyr('2016',this)">2016</button>
+        <button class="fbtn" onclick="fyr('2019',this)">2019</button>
+        <button class="fbtn" onclick="fyr('2022',this)">2022</button>
+      </div>
+      <div class="cw" style="height:250px"><canvas id="cMain"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="chd"><div><div class="ct">P&L Waterfall (All-Time)</div>
+        <div class="cs">Logic: Revenue → COGS → GP → Refund → Net Profit</div></div>
+      </div>
+      <div class="wf" style="margin-top:16px">
+        <div class="wfi"><span class="wfl">Total Revenue</span><div class="wfb" style="background:var(--c-gold-l);color:var(--c-gold);width:100%">+16,430M</div></div>
+        <div class="wfi"><span class="wfl">— COGS</span><div class="wfb" style="background:var(--c-rose-l);color:#FDA4AF;width:86.2%">−14,163M</div></div>
+        
+        <div class="wfi wf-div"><span class="wfl" style="color:var(--c-gold);font-weight:600">= Gross Profit</span><div class="wfb" style="background:var(--c-gold-l);color:var(--c-gold);width:13.8%;border:1px solid rgba(212,175,55,.3)">+2,267M</div></div>
+        
+        <div class="wfi"><span class="wfl">— Refund</span><div class="wfb" style="background:var(--c-navy-l);color:#93C5FD;width:3.1%">−510.6M</div></div>
+        
+        <div class="wfi" style="margin-top:8px; padding-top:8px; border-top:1px solid var(--bd);"><span class="wfl" style="color:var(--c-teal);font-weight:700">= Net Profit</span><div class="wfb" style="background:var(--c-teal-l);color:#5EEAD4;width:10.7%;border:1px solid rgba(13,148,136,.3)">+1,756.4M</div></div>
+      </div>
+      <div style="margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div style="background:var(--s2);border:1px solid var(--bd);border-radius:6px;padding:12px">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:4px;text-transform:uppercase;font-weight:600">Net Profit Margin</div>
+          <div style="font-size:20px;font-weight:700;font-family:var(--mono);color:#5EEAD4">10.7%</div>
+        </div>
+        <div style="background:var(--s2);border:1px solid var(--bd);border-radius:6px;padding:12px">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:4px;text-transform:uppercase;font-weight:600">Gross Margin</div>
+          <div style="font-size:20px;font-weight:700;font-family:var(--mono);color:var(--c-gold)">13.8%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="grid g3">
+    <div class="card">
+      <div class="chd"><div><div class="ct">Revenue by Year</div><div class="cs">Downward trend since 2019</div></div></div>
+      <div class="cw" style="height:180px"><canvas id="cAnn"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="chd"><div><div class="ct">Gross Margin % by Year</div><div class="cs">Synced V2 Calculation Logic</div></div></div>
+      <div class="cw" style="height:180px"><canvas id="cGPM"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="chd"><div><div class="ct">Seasonality</div><div class="cs">Avg Revenue per Month (All Years)</div></div></div>
+      <div class="cw" style="height:180px"><canvas id="cSea"></canvas></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 1 · REVENUE ══ -->
+<section class="section" id="s1">
+  <div class="grid g2">
+    <div class="card">
+      <div class="chd"><div><div class="ct">Revenue & Gross Profit by Year</div><div class="cs">Billion VND</div></div></div>
+      <div class="cw" style="height:250px"><canvas id="cA2"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="chd"><div><div class="ct">Gross Margin %</div><div class="cs">Historical Average 13.8%</div></div></div>
+      <div class="cw" style="height:250px"><canvas id="cGPM2"></canvas></div>
+    </div>
+  </div>
+  <div class="grid g2">
+    <div class="card">
+      <div class="chd"><div><div class="ct">Payment Methods</div><div class="cs">By Number of Orders</div></div></div>
+      <div class="cw" style="height:220px"><canvas id="cPM"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="chd"><div><div class="ct">Seasonality (Avg Monthly)</div><div class="cs">Million VND / Month</div></div></div>
+      <div class="cw" style="height:220px"><canvas id="cSea2"></canvas></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 2 · WEB TRAFFIC ══ -->
+<section class="section" id="s2">
+  <div class="krow k4">
+    <div class="kpi" style="--kc:var(--c-gold)"><div class="kl">Total Sessions</div><div class="kv">91.5M</div><div class="ks">From 6 Traffic Sources</div></div>
+    <div class="kpi" style="--kc:var(--c-teal)"><div class="kl">Conversion Rate</div><div class="kv">0.672%</div><div class="ks">Orders / Sessions</div></div>
+    <div class="kpi" style="--kc:var(--c-rose)"><div class="kl">Avg Bounce Rate</div><div class="kv">0.45%</div><div class="ks">Averaged across all sources</div></div>
+    <div class="kpi" style="--kc:var(--c-navy)"><div class="kl">Avg Session Duration</div><div class="kv">3.5 min</div><div class="ks">On-site Experience</div></div>
+  </div>
+  <div class="grid g2">
+    <div class="card">
+      <div class="chd"><div><div class="ct">Conversion Metrics (Monthly)</div>
+        <div class="cs">Select metric to view trend</div></div>
+      </div>
+      <div class="fbar">
+        <button class="fbtn on" id="bwc" onclick="twM('conv')">Conversion %</button>
+        <button class="fbtn" id="bwb" onclick="twM('bounce')">Bounce Rate %</button>
+        <button class="fbtn" id="bwd" onclick="twM('dur')">Duration (min)</button>
+      </div>
+      <div class="cw" style="height:230px"><canvas id="cWM"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="chd"><div><div class="ct">Sessions vs Orders</div>
+        <div class="cs">Divergence indicates declining traffic quality</div></div>
+      </div>
+      <div class="cw" style="height:230px"><canvas id="cSO"></canvas></div>
+    </div>
+  </div>
+  <div class="grid g2">
+    <div class="card">
+      <div class="chd"><div><div class="ct">Traffic Quality by Source</div>
+        <div class="cs">Bounce Rate, Pages/Session, Duration</div></div>
+      </div>
+      <div class="cw" style="height:230px"><canvas id="cSQ"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="chd"><div><div class="ct">Conversions by Source</div>
+        <div class="cs">Sessions vs Orders Generated</div></div></div>
+      <div class="cw" style="height:230px"><canvas id="cSV"></canvas></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 3 · CUSTOMERS ══ -->
+<section class="section" id="s3">
+  <div class="grid g3">
+    <div class="card">
+      <div class="chd"><div><div class="ct">Gender</div></div></div>
+      <div class="cw" style="height:200px"><canvas id="cGen"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="chd"><div><div class="ct">Age Group</div></div></div>
+      <div class="cw" style="height:200px"><canvas id="cAge"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="chd"><div><div class="ct">Acquisition Channel</div></div></div>
+      <div class="cw" style="height:200px"><canvas id="cAch"></canvas></div>
+    </div>
+  </div>
+  <div class="grid g2">
+    <div class="card">
+      <div class="chd"><div><div class="ct">Top 10 Cities</div><div class="cs">By Customer Count</div></div></div>
+      <div class="hb" id="cityHB" style="margin-top:8px"></div>
+    </div>
+    <div class="card">
+      <div class="chd"><div><div class="ct">Orders by Marketing Source</div></div></div>
+      <div class="cw" style="height:220px"><canvas id="cOS2"></canvas></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 4 · PROFITABILITY ══ -->
+<section class="section" id="s4">
+  <div class="krow k4">
+    <div class="kpi" style="--kc:var(--c-teal)"><div class="kl">Streetwear Profit Share</div><div class="kv">76.8%</div><div class="ks">Largest Contributor</div></div>
+    <div class="kpi" style="--kc:var(--c-gold)"><div class="kl">Best SKU Profit</div><div class="kv">114.7M</div><div class="ks">SaigonFlex UM-43</div></div>
+    <div class="kpi" style="--kc:var(--c-rose)"><div class="kl">Worst SKU Loss</div><div class="kv">−23.1M</div><div class="ks">HanoiStreet UM-10</div></div>
+    <div class="kpi" style="--kc:var(--c-navy)"><div class="kl">Top Category GM</div><div class="kv">GenZ 19.1%</div><div class="ks">Highest actual margin (transaction-based)</div></div>
+  </div>
+
+  <div class="grid g2">
+    <div class="card">
+      <div class="chd"><div><div class="ct">Profit by Category & Year</div>
+        <div class="cs">Million VND</div></div>
+      </div>
+      <div class="cw" style="height:250px"><canvas id="cCatProf"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="chd"><div><div class="ct">Gross Margin % by Category & Year</div><div class="cs">Casual leading consistently</div></div></div>
+      <div class="cw" style="height:250px"><canvas id="cCatGM"></canvas></div>
+    </div>
+  </div>
+
+  <div class="grid g2">
+    <div class="card">
+      <div class="chd"><div><div class="ct">Segment Margin Performance</div></div>
+        <div class="fbar" style="margin-bottom:0">
+          <button class="fbtn on" id="bseg1" onclick="tglSeg('gm')">GM %</button>
+        </div></div>
+      <div class="cw" style="height:250px"><canvas id="cSegProf"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="chd"><div><div class="ct">Revenue vs Profit Scatter (Top 50 SKUs)</div>
+        <div class="cs">Red = Loss-making · Bubble Size = Sales Volume</div></div>
+      </div>
+      <div class="cw" style="height:250px"><canvas id="cScatter"></canvas></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:14px">
+    <div class="chd"><div><div class="ct">Top 6 SKU Profit Trend (Million VND)</div></div>
+      <div class="fbar" style="margin-bottom:0">
+        <span class="fl">Filter:</span>
+        <button class="fbtn on" onclick="fSKU('all',this)">All</button>
+        <button class="fbtn" onclick="fSKU('UM43',this)">UM-43</button>
+        <button class="fbtn" onclick="fSKU('UE05',this)">UE-05</button>
+        <button class="fbtn" onclick="fSKU('UC69',this)">UC-69</button>
+        <button class="fbtn" onclick="fSKU('RP21',this)">RP-21</button>
+      </div></div>
+    <div class="cw" style="height:230px"><canvas id="cSKUTrend"></canvas></div>
+  </div>
+
+  <div class="grid g2">
+    <div class="card">
+      <div class="chd"><div><div class="ct">Top 10 Profitable SKUs</div>
+        <div class="cs">Net profit after COGS and Refunds</div></div>
+      </div>
+      <table class="tbl">
+        <tr><th>SKU</th><th>Category</th><th>Profit (M)</th><th>Revenue (M)</th><th>GM%</th></tr>
+        <tr><td class="nm">SaigonFlex UM-43</td><td>Streetwear</td><td class="pos">114.77</td><td>340.71</td><td>33.7%</td></tr>
+        <tr><td class="nm">UrbanVN UE-05</td><td>Streetwear</td><td class="pos">69.63</td><td>185.08</td><td>37.6%</td></tr>
+        <tr><td class="nm">SaigonFlex UC-69</td><td>Streetwear</td><td class="pos">47.75</td><td>207.93</td><td>23.0%</td></tr>
+        <tr><td class="nm">SaigonFlex UM-48</td><td>Streetwear</td><td class="pos">42.28</td><td>123.95</td><td>34.1%</td></tr>
+        <tr><td class="nm">SaigonFlex UM-38</td><td>Streetwear</td><td class="pos">38.65</td><td>114.00</td><td>33.9%</td></tr>
+        <tr><td class="nm">HanoiStreet RP-21</td><td>Outdoor</td><td class="pos">37.15</td><td>93.29</td><td>39.8%</td></tr>
+        <tr><td class="nm">SaigonFlex UM-04</td><td>Streetwear</td><td class="pos">31.62</td><td>90.69</td><td>34.9%</td></tr>
+        <tr><td class="nm">SaigonFlex UM-80</td><td>Streetwear</td><td class="pos">28.53</td><td>267.39</td><td>10.7%</td></tr>
+        <tr><td class="nm">SaigonFlex UC-12</td><td>Streetwear</td><td class="pos">23.34</td><td>66.36</td><td>36.2%</td></tr>
+        <tr><td class="nm">SaigonFlex UM-72</td><td>Streetwear</td><td class="pos">23.17</td><td>66.87</td><td>34.6%</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="chd"><div><div class="ct">Bottom 10 Loss-Making SKUs</div>
+        <div class="cs">Review pricing or consider discontinuation</div></div>
+      </div>
+      <table class="tbl">
+        <tr><th>SKU</th><th>Category</th><th>Profit (M)</th><th>Revenue (M)</th><th>GM%</th></tr>
+        <tr><td class="nm">HanoiStreet UM-10</td><td>Streetwear</td><td class="neg">−23.13</td><td>342.26</td><td class="neg">−6.8%</td></tr>
+        <tr><td class="nm">SaigonFlex UM-96</td><td>Streetwear</td><td class="neg">−16.27</td><td>251.82</td><td class="neg">−6.5%</td></tr>
+        <tr><td class="nm">SaigonFlex UM-11</td><td>Streetwear</td><td class="neg">−13.67</td><td>205.72</td><td class="neg">−6.8%</td></tr>
+        <tr><td class="nm">HanoiStreet UE-36</td><td>Streetwear</td><td class="neg">−12.89</td><td>168.30</td><td class="neg">−7.7%</td></tr>
+        <tr><td class="nm">UrbanVN UE-14</td><td>Streetwear</td><td class="neg">−11.15</td><td>160.08</td><td class="neg">−7.0%</td></tr>
+        <tr><td class="nm">SaigonFlex UM-12</td><td>Streetwear</td><td class="neg">−10.61</td><td>132.92</td><td class="neg">−8.0%</td></tr>
+        <tr><td class="nm">UrbanVN UE-15</td><td>Streetwear</td><td class="neg">−10.54</td><td>140.77</td><td class="neg">−7.5%</td></tr>
+        <tr><td class="nm">SaigonFlex UM-01</td><td>Streetwear</td><td class="neg">−10.43</td><td>133.71</td><td class="neg">−7.8%</td></tr>
+        <tr><td class="nm">HanoiStreet UE-16</td><td>Streetwear</td><td class="neg">−9.53</td><td>137.86</td><td class="neg">−6.9%</td></tr>
+        <tr><td class="nm">SaigonFlex UC-16</td><td>Streetwear</td><td class="neg">−9.21</td><td>160.76</td><td class="neg">−6.2%</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 5 · RETURNS ══ -->
+<section class="section" id="s5">
+  <div class="krow k4">
+    <div class="kpi" style="--kc:var(--c-rose)"><div class="kl">Returned Units</div><div class="kv">109,586</div><div class="ks">39,939 return records</div></div>
+    <div class="kpi" style="--kc:var(--c-gold)"><div class="kl">Total Refund</div><div class="kv">510.6M</div><div class="ks">Million VND</div></div>
+    <div class="kpi" style="--kc:var(--c-navy)"><div class="kl">Return Rate</div><div class="kv">5.6%</div><div class="ks">Returns / Total Order Items</div></div>
+    <div class="kpi" style="--kc:var(--c-teal)"><div class="kl">Top Reason</div><div class="kv">Wrong Size</div><div class="ks">Accounts for 35%</div></div>
+  </div>
+  <div class="grid g2">
+    <div class="card">
+      <div class="chd"><div><div class="ct">Return Qty & Refund by Category</div></div></div>
+      <div class="cw" style="height:230px"><canvas id="cRC"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="chd"><div><div class="ct">Return Qty by Segment</div></div></div>
+      <div class="cw" style="height:230px"><canvas id="cRS"></canvas></div>
+    </div>
+  </div>
+  <div class="grid g3">
+    <div class="card">
+      <div class="chd"><div><div class="ct">Return Rate by Size (%)</div></div></div>
+      <div class="cw" style="height:200px"><canvas id="cRSz"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="chd"><div><div class="ct">Return Reasons</div></div></div>
+      <div class="cw" style="height:200px"><canvas id="cRRsn"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="chd"><div><div class="ct">Reasons by Category (Stacked)</div></div></div>
+      <div class="cw" style="height:200px"><canvas id="cRPiv"></canvas></div>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:14px">
+    <div class="chd"><div><div class="ct">Return Trends by Month</div></div></div>
+    <div class="cw" style="height:220px"><canvas id="cRMon"></canvas></div>
+  </div>
+</section>
+
+<!-- ══ 6 · INVENTORY ══ -->
+<section class="section" id="s6">
+  <div class="grid g2">
+    <div class="card">
+      <div class="chd"><div><div class="ct">Stockout vs Overstock (Month %)</div>
+        <div class="cs">Simultaneous occurrence implies SKU misallocation</div></div></div>
+      <div class="cw" style="height:230px"><canvas id="cInvF"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="chd"><div><div class="ct">Sell-through Rate by Segment (%)</div></div></div>
+      <div class="cw" style="height:230px"><canvas id="cST"></canvas></div>
+    </div>
+  </div>
+  <div class="grid g3">
+    <div class="card">
+      <div class="chd"><div><div class="ct">Days of Supply (Median)</div></div></div>
+      <div class="hb" style="margin-top:12px">
+        <div class="hbi"><div class="hbr"><span class="hbl">Outdoor</span><span class="hbv">300 Days</span></div><div class="hbt"><div class="hbf" style="width:100%;background:var(--c-rose)"></div></div></div>
+        <div class="hbi"><div class="hbr"><span class="hbl">Streetwear</span><span class="hbv">219 Days</span></div><div class="hbt"><div class="hbf" style="width:73%;background:var(--c-gold)"></div></div></div>
+        <div class="hbi"><div class="hbr"><span class="hbl">GenZ</span><span class="hbv">210 Days</span></div><div class="hbt"><div class="hbf" style="width:70%;background:var(--c-gold)"></div></div></div>
+        <div class="hbi"><div class="hbr"><span class="hbl">Casual</span><span class="hbv">195 Days</span></div><div class="hbt"><div class="hbf" style="width:65%;background:var(--c-teal)"></div></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="chd"><div><div class="ct">Fill Rate by Category (%)</div></div></div>
+      <div class="cw" style="height:190px"><canvas id="cFR"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="chd"><div><div class="ct">Inventory Health Matrix</div></div></div>
+      <table class="tbl" style="margin-top:8px">
+        <tr><th>Category</th><th>Stockout</th><th>Overstock</th><th>ST%</th></tr>
+        <tr><td class="nm">Casual</td><td>66.2%</td><td>72.6%</td><td>16.8%</td></tr>
+        <tr><td class="nm">GenZ</td><td>68.3%</td><td>71.6%</td><td>16.8%</td></tr>
+        <tr><td class="nm">Outdoor</td><td>67.3%</td><td>79.9%</td><td>13.5%</td></tr>
+        <tr><td class="nm">Streetwear</td><td>67.3%</td><td>74.9%</td><td>16.0%</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 7 · PROMOTIONS ══ -->
+<section class="section" id="s7">
+  <div class="grid g3">
+    <div class="card">
+      <div class="chd"><div><div class="ct">Promo Revenue Share</div></div></div>
+      <div class="cw" style="height:210px"><canvas id="cPR"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="chd"><div><div class="ct">Promo Orders Share</div></div></div>
+      <div class="cw" style="height:210px"><canvas id="cPO"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="chd"><div><div class="ct">Promotion KPIs</div></div></div>
+      <table class="tbl" style="margin-top:10px">
+        <tr><th>Metric</th><th>Value</th></tr>
+        <tr><td class="nm">Total Discount Issued</td><td>749.6M VND</td></tr>
+        <tr><td class="nm">Promo Order Revenue</td><td>5.44B VND</td></tr>
+        <tr><td class="nm">Discount / Promo Rev</td><td>13.8%</td></tr>
+        <tr><td class="nm">Orders with Promo</td><td>276,316 Orders</td></tr>
+        <tr><td class="nm">AOV (With Promo)</td><td>~19,688 VND</td></tr>
+        <tr><td class="nm">AOV (No Promo)</td><td>~25,087 VND</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="grid g2">
+    <div class="card">
+      <div class="chd"><div><div class="ct">Gross Margin Impact (15% Discount)</div>
+        <div class="cs">Dashed line = Remaining Gross Margin</div></div></div>
+      <div class="cw" style="height:250px"><canvas id="cPGM"></canvas></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 8 · VẬN HÀNH ══ -->
+<section class="section" id="s8">
+  <div class="krow k4">
+    <div class="kpi" style="--kc:var(--c-rose)"><div class="kl">Stockout Rate</div><div class="kv">67.3%</div><div class="ks">Months with stockout / Total months</div></div>
+    <div class="kpi" style="--kc:var(--c-gold)"><div class="kl">Overstock Rate</div><div class="kv">76.3%</div><div class="ks">Months with excess stock / Total months</div></div>
+    <div class="kpi" style="--kc:var(--c-teal)"><div class="kl">Fill Rate</div><div class="kv">96.2%</div><div class="ks">Orders fulfilled from stock</div></div>
+    <div class="kpi" style="--kc:var(--c-navy)"><div class="kl">Median Delivery</div><div class="kv">6 days</div><div class="ks">82% delivered within 4–8 days</div></div>
+  </div>
+  <div class="grid g2">
+    <div class="card">
+      <div class="chd"><div><div class="ct">Delivery Time Distribution</div>
+        <div class="cs">Order date → Received · 566K orders · Normal dist 2–10 days</div></div></div>
+      <div class="cw" style="height:230px"><canvas id="cDD"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="chd"><div><div class="ct">Delivery Days vs Rating</div>
+        <div class="cs">Slower delivery does NOT meaningfully reduce rating</div></div></div>
+      <div class="cw" style="height:230px"><canvas id="cDVRat"></canvas></div>
+    </div>
+  </div>
+  <div class="grid g3">
+    <div class="card">
+      <div class="chd"><div><div class="ct">Rating Distribution</div><div class="cs">113,551 reviews · Avg 3.936★</div></div></div>
+      <div class="cw" style="height:190px"><canvas id="cRatDist"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="chd"><div><div class="ct">Rating by Category</div><div class="cs">Consistently ~3.93 · low variance</div></div></div>
+      <div class="cw" style="height:190px"><canvas id="cRatCat"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="chd"><div><div class="ct">Service Scorecard</div><div class="cs">Key operational metrics</div></div></div>
+      <table class="tbl" style="margin-top:8px">
+        <tr><th>Metric</th><th>Value</th><th>Status</th></tr>
+        <tr><td class="nm">Avg Rating</td><td>3.936 / 5</td><td><span style="color:#5EEAD4;font-size:10px;font-weight:700">✓ Good</span></td></tr>
+        <tr><td class="nm">Fill Rate</td><td>96.2%</td><td><span style="color:#5EEAD4;font-size:10px;font-weight:700">✓ Excellent</span></td></tr>
+        <tr><td class="nm">Delivered %</td><td>79.9%</td><td><span style="color:#5EEAD4;font-size:10px;font-weight:700">✓ Good</span></td></tr>
+        <tr><td class="nm">Cancelled %</td><td>9.2%</td><td><span style="color:#FCD34D;font-size:10px;font-weight:700">⚠ Monitor</span></td></tr>
+        <tr><td class="nm">Return Rate</td><td>5.6%</td><td><span style="color:#FCD34D;font-size:10px;font-weight:700">⚠ Monitor</span></td></tr>
+        <tr><td class="nm">Median Delivery</td><td>6 days</td><td><span style="color:var(--c-navy);font-size:10px;font-weight:700">● Baseline</span></td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="grid g2">
+    <div class="card">
+      <div class="chd"><div><div class="ct">Stockout vs Overstock — Monthly Trend</div>
+        <div class="cs">% of SKUs flagged per month · 2012–2022</div></div>
+        <div class="fbar" style="margin-bottom:0">
+          <button class="fbtn on" id="binvSO" onclick="tglInv('so',this)">Stockout / Overstock</button>
+          <button class="fbtn" id="binvDOS" onclick="tglInv('dos',this)">Days of Supply</button>
+          <button class="fbtn" id="binvST" onclick="tglInv('st',this)">Sell-through</button>
+        </div>
+      </div>
+      <div class="cw" style="height:230px"><canvas id="cInvMon"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="chd"><div><div class="ct">Inventory Health by Category</div>
+        <div class="cs">Stockout · Overstock · Fill Rate · Sell-through</div></div></div>
+      <div class="cw" style="height:230px"><canvas id="cInvCat"></canvas></div>
+    </div>
+  </div>
+  <div class="grid g3">
+    <div class="card">
+      <div class="chd"><div><div class="ct">Stockout vs Overstock by Category</div><div class="cs">% of months flagged</div></div></div>
+      <div class="cw" style="height:190px"><canvas id="cInvF2"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="chd"><div><div class="ct">Sell-through Rate by Segment</div><div class="cs">Standard leads at 18.6%</div></div></div>
+      <div class="cw" style="height:190px"><canvas id="cST2"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="chd"><div><div class="ct">Inventory Health Matrix</div><div class="cs">Summary by category</div></div></div>
+      <table class="tbl" style="margin-top:8px">
+        <tr><th>Category</th><th>Stockout</th><th>Overstock</th><th>Fill Rate</th><th>ST%</th></tr>
+        <tr><td class="nm">Casual</td><td>66.2%</td><td>72.6%</td><td>96.2%</td><td>16.8%</td></tr>
+        <tr><td class="nm">GenZ</td><td>68.3%</td><td>71.6%</td><td>96.2%</td><td>16.8%</td></tr>
+        <tr><td class="nm">Outdoor</td><td>67.3%</td><td>79.9%</td><td>96.3%</td><td>13.5%</td></tr>
+        <tr><td class="nm">Streetwear</td><td>67.3%</td><td>74.9%</td><td>96.0%</td><td>16.0%</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script>
+// ══════════════════════════════════
+// FULL HISTORICAL DATA & LOGIC
+// ══════════════════════════════════
+const MONTHLY=[{"ym":"2012-07","rev":130.41,"gp":27.89},{"ym":"2012-08","rev":159.09,"gp":33.5},{"ym":"2012-09","rev":129.31,"gp":26.71},{"ym":"2012-10","rev":110.19,"gp":22.13},{"ym":"2012-11","rev":98.19,"gp":20.37},{"ym":"2012-12","rev":114.32,"gp":23.43},{"ym":"2013-01","rev":91.31,"gp":18.28},{"ym":"2013-02","rev":109.78,"gp":19.5},{"ym":"2013-03","rev":151.83,"gp":21.94},{"ym":"2013-04","rev":198.93,"gp":33.34},{"ym":"2013-05","rev":200.5,"gp":40.74},{"ym":"2013-06","rev":198.52,"gp":32.22},{"ym":"2013-07","rev":165.75,"gp":12.7},{"ym":"2013-08","rev":116.27,"gp":-35.68},{"ym":"2013-09","rev":127.53,"gp":11.37},{"ym":"2013-10","rev":115.09,"gp":22.4},{"ym":"2013-11","rev":90.37,"gp":13.25},{"ym":"2013-12","rev":91.29,"gp":1.12},{"ym":"2014-01","rev":91.8,"gp":16.99},{"ym":"2014-02","rev":108.44,"gp":22.18},{"ym":"2014-03","rev":183.51,"gp":26.34},{"ym":"2014-04","rev":232.57,"gp":35.68},{"ym":"2014-05","rev":244.31,"gp":49.12},{"ym":"2014-06","rev":208.13,"gp":34.03},{"ym":"2014-07","rev":169.16,"gp":17.91},{"ym":"2014-08","rev":195.27,"gp":40.31},{"ym":"2014-09","rev":120.62,"gp":15.45},{"ym":"2014-10","rev":120.98,"gp":24.7},{"ym":"2014-11","rev":93.29,"gp":12.61},{"ym":"2014-12","rev":103.76,"gp":1.94},{"ym":"2015-01","rev":89.88,"gp":17.95},{"ym":"2015-02","rev":120.68,"gp":21.61},{"ym":"2015-03","rev":170.94,"gp":25.97},{"ym":"2015-04","rev":259.69,"gp":42.03},{"ym":"2015-05","rev":240.38,"gp":49.24},{"ym":"2015-06","rev":215.84,"gp":37.64},{"ym":"2015-07","rev":170.24,"gp":15.48},{"ym":"2015-08","rev":119.85,"gp":-38.77},{"ym":"2015-09","rev":155.03,"gp":14.78},{"ym":"2015-10","rev":139.23,"gp":26.78},{"ym":"2015-11","rev":102.31,"gp":11.51},{"ym":"2015-12","rev":105.85,"gp":0.27},{"ym":"2016-01","rev":117.2,"gp":21.04},{"ym":"2016-02","rev":129.7,"gp":24.91},{"ym":"2016-03","rev":179.15,"gp":24.97},{"ym":"2016-04","rev":267.11,"gp":39.86},{"ym":"2016-05","rev":268.13,"gp":52.88},{"ym":"2016-06","rev":253.94,"gp":40.65},{"ym":"2016-07","rev":179.17,"gp":18.67},{"ym":"2016-08","rev":227.01,"gp":45.1},{"ym":"2016-09","rev":145.15,"gp":16.1},{"ym":"2016-10","rev":127.35,"gp":25.27},{"ym":"2016-11","rev":105.11,"gp":13.71},{"ym":"2016-12","rev":105.62,"gp":0.91},{"ym":"2017-01","rev":95.27,"gp":18.08},{"ym":"2017-02","rev":109.98,"gp":19.45},{"ym":"2017-03","rev":188.38,"gp":25.35},{"ym":"2017-04","rev":229.53,"gp":34.34},{"ym":"2017-05","rev":262.91,"gp":51.84},{"ym":"2017-06","rev":267.43,"gp":42.17},{"ym":"2017-07","rev":188.99,"gp":14.58},{"ym":"2017-08","rev":117.3,"gp":-41.51},{"ym":"2017-09","rev":134.94,"gp":11.13},{"ym":"2017-10","rev":131.72,"gp":27.06},{"ym":"2017-11","rev":100.96,"gp":13.37},{"ym":"2017-12","rev":83.74,"gp":0.91},{"ym":"2018-01","rev":90.96,"gp":16.44},{"ym":"2018-02","rev":110.31,"gp":22.51},{"ym":"2018-03","rev":170.1,"gp":25.99},{"ym":"2018-04","rev":220.22,"gp":37.13},{"ym":"2018-05","rev":262.78,"gp":54.18},{"ym":"2018-06","rev":271.67,"gp":45.33},{"ym":"2018-07","rev":182.07,"gp":19.06},{"ym":"2018-08","rev":194.28,"gp":40.44},{"ym":"2018-09","rev":117.97,"gp":14.7},{"ym":"2018-10","rev":100.59,"gp":20.69},{"ym":"2018-11","rev":67.9,"gp":10.08},{"ym":"2018-12","rev":61.27,"gp":1.38},{"ym":"2019-01","rev":72.96,"gp":14.43},{"ym":"2019-02","rev":85.06,"gp":16.02},{"ym":"2019-03","rev":121.21,"gp":17.41},{"ym":"2019-04","rev":135.73,"gp":21.3},{"ym":"2019-05","rev":144.44,"gp":29.65},{"ym":"2019-06","rev":137.73,"gp":22.46},{"ym":"2019-07","rev":99.38,"gp":7.57},{"ym":"2019-08","rev":81.5,"gp":-27.9},{"ym":"2019-09","rev":83.29,"gp":8.23},{"ym":"2019-10","rev":72.06,"gp":14.27},{"ym":"2019-11","rev":55.01,"gp":7.51},{"ym":"2019-12","rev":48.43,"gp":0.66},{"ym":"2020-01","rev":47.73,"gp":9.74},{"ym":"2020-02","rev":62.45,"gp":12.63},{"ym":"2020-03","rev":111.8,"gp":16.41},{"ym":"2020-04","rev":139.96,"gp":22.17},{"ym":"2020-05","rev":132.82,"gp":27.25},{"ym":"2020-06","rev":110.61,"gp":18.09},{"ym":"2020-07","rev":90.7,"gp":9.39},{"ym":"2020-08","rev":122.07,"gp":24.02},{"ym":"2020-09","rev":78.83,"gp":8.79},{"ym":"2020-10","rev":68.14,"gp":13.74},{"ym":"2020-11","rev":45.74,"gp":5.76},{"ym":"2020-12","rev":43.67,"gp":0.44},{"ym":"2021-01","rev":46.47,"gp":9.37},{"ym":"2021-02","rev":66.08,"gp":12.52},{"ym":"2021-03","rev":113.27,"gp":16.05},{"ym":"2021-04","rev":134.84,"gp":19.32},{"ym":"2021-05","rev":143.07,"gp":26.73},{"ym":"2021-06","rev":128.45,"gp":20.18},{"ym":"2021-07","rev":101.0,"gp":6.54},{"ym":"2021-08","rev":68.28,"gp":-27.37},{"ym":"2021-09","rev":74.84,"gp":3.95},{"ym":"2021-10","rev":65.69,"gp":10.7},{"ym":"2021-11","rev":50.64,"gp":4.97},{"ym":"2021-12","rev":50.4,"gp":-1.04},{"ym":"2022-01","rev":59.66,"gp":8.81},{"ym":"2022-02","rev":79.1,"gp":13.82},{"ym":"2022-03","rev":137.54,"gp":15.87},{"ym":"2022-04","rev":141.31,"gp":16.94},{"ym":"2022-05","rev":139.03,"gp":25.08},{"ym":"2022-06","rev":135.81,"gp":18.1},{"ym":"2022-07","rev":98.14,"gp":6.54},{"ym":"2022-08","rev":113.54,"gp":19.51},{"ym":"2022-09","rev":85.76,"gp":7.37},{"ym":"2022-10","rev":75.19,"gp":13.22},{"ym":"2022-11","rev":52.2,"gp":5.1},{"ym":"2022-12","rev":52.45,"gp":-1.03}];
+
+// Calculate Full MA12 Array dynamically
+const MA12M={};
+for(let i=0; i<MONTHLY.length; i++) {
+  if(i>=11) {
+    let sum=0;
+    for(let j=0; j<12; j++) sum+=MONTHLY[i-j].rev;
+    MA12M[MONTHLY[i].ym] = sum/12;
+  }
+}
+
+const ANNUAL=[{"year":2012,"rev_B":0.741,"gp_B":0.154,"gpm":20.8},{"year":2013,"rev_B":1.657,"gp_B":0.191,"gpm":11.5},{"year":2014,"rev_B":1.872,"gp_B":0.297,"gpm":15.9},{"year":2015,"rev_B":1.89,"gp_B":0.224,"gpm":11.9},{"year":2016,"rev_B":2.105,"gp_B":0.324,"gpm":15.4},{"year":2017,"rev_B":1.911,"gp_B":0.217,"gpm":11.3},{"year":2018,"rev_B":1.85,"gp_B":0.308,"gpm":16.6},{"year":2019,"rev_B":1.137,"gp_B":0.132,"gpm":11.6},{"year":2020,"rev_B":1.055,"gp_B":0.168,"gpm":16.0},{"year":2021,"rev_B":1.043,"gp_B":0.102,"gpm":9.8},{"year":2022,"rev_B":1.17,"gp_B":0.149,"gpm":12.8}];
+const MWEB=[{"ym":"2013-01","sessions_K":295.01,"orders_K":3.66,"conv_rate":1.2423,"bounce_pct":0.453,"duration_min":3.71},{"ym":"2013-06","sessions_K":802.61,"orders_K":8.47,"conv_rate":1.0552,"bounce_pct":0.459,"duration_min":3.36},{"ym":"2013-12","sessions_K":406.12,"orders_K":6.67,"conv_rate":1.6414,"bounce_pct":0.461,"duration_min":3.46},{"ym":"2014-01","sessions_K":331.44,"orders_K":4.15,"conv_rate":1.2524,"bounce_pct":0.443,"duration_min":3.23},{"ym":"2014-06","sessions_K":872.95,"orders_K":8.47,"conv_rate":0.9707,"bounce_pct":0.462,"duration_min":3.59},{"ym":"2014-12","sessions_K":424.27,"orders_K":7.03,"conv_rate":1.6563,"bounce_pct":0.442,"duration_min":3.71},{"ym":"2015-04","sessions_K":968.39,"orders_K":10.5,"conv_rate":1.0845,"bounce_pct":0.44,"duration_min":3.53},{"ym":"2015-12","sessions_K":459.63,"orders_K":6.93,"conv_rate":1.5079,"bounce_pct":0.451,"duration_min":3.34},{"ym":"2016-04","sessions_K":1013.61,"orders_K":10.43,"conv_rate":1.0286,"bounce_pct":0.45,"duration_min":3.53},{"ym":"2016-12","sessions_K":494.09,"orders_K":6.27,"conv_rate":1.2694,"bounce_pct":0.429,"duration_min":3.43},{"ym":"2017-05","sessions_K":1079.7,"orders_K":9.55,"conv_rate":0.8848,"bounce_pct":0.437,"duration_min":3.46},{"ym":"2017-12","sessions_K":519.71,"orders_K":4.89,"conv_rate":0.9413,"bounce_pct":0.439,"duration_min":3.63},{"ym":"2018-06","sessions_K":1118.68,"orders_K":10.85,"conv_rate":0.97,"bounce_pct":0.442,"duration_min":3.57},{"ym":"2018-12","sessions_K":558.38,"orders_K":3.24,"conv_rate":0.5804,"bounce_pct":0.439,"duration_min":3.48},{"ym":"2019-04","sessions_K":1222.81,"orders_K":4.53,"conv_rate":0.37,"bounce_pct":0.444,"duration_min":3.5},{"ym":"2019-12","sessions_K":583.64,"orders_K":2.77,"conv_rate":0.4753,"bounce_pct":0.469,"duration_min":3.54},{"ym":"2020-04","sessions_K":1296.18,"orders_K":4.71,"conv_rate":0.3631,"bounce_pct":0.458,"duration_min":3.15},{"ym":"2020-12","sessions_K":592.58,"orders_K":2.21,"conv_rate":0.3724,"bounce_pct":0.434,"duration_min":3.69},{"ym":"2021-04","sessions_K":1332.46,"orders_K":4.35,"conv_rate":0.3262,"bounce_pct":0.435,"duration_min":3.21},{"ym":"2021-08","sessions_K":1181.18,"orders_K":3.22,"conv_rate":0.273,"bounce_pct":0.435,"duration_min":3.72},{"ym":"2021-12","sessions_K":635.28,"orders_K":2.19,"conv_rate":0.3441,"bounce_pct":0.456,"duration_min":3.09},{"ym":"2022-04","sessions_K":1345.67,"orders_K":4.49,"conv_rate":0.3336,"bounce_pct":0.487,"duration_min":3.14},{"ym":"2022-09","sessions_K":816.74,"orders_K":2.64,"conv_rate":0.3236,"bounce_pct":0.436,"duration_min":4.04},{"ym":"2022-12","sessions_K":639.28,"orders_K":2.4,"conv_rate":0.3754,"bounce_pct":0.43,"duration_min":3.24}];
+const RETMON=[{"ym":"2012-07","return_qty":294,"refund_M":1.57},{"ym":"2012-08","return_qty":1044,"refund_M":4.59},{"ym":"2012-09","return_qty":923,"refund_M":4.14},{"ym":"2012-10","return_qty":947,"refund_M":4.4},{"ym":"2012-11","return_qty":845,"refund_M":3.77},{"ym":"2012-12","return_qty":765,"refund_M":2.65},{"ym":"2013-04","return_qty":1521,"refund_M":6.08},{"ym":"2013-05","return_qty":1581,"refund_M":6.65},{"ym":"2013-06","return_qty":1464,"refund_M":6.57},{"ym":"2013-08","return_qty":1323,"refund_M":4.78},{"ym":"2013-12","return_qty":861,"refund_M":2.34},{"ym":"2014-05","return_qty":1673,"refund_M":7.53},{"ym":"2014-06","return_qty":1659,"refund_M":7.47},{"ym":"2014-12","return_qty":939,"refund_M":2.74},{"ym":"2015-05","return_qty":1752,"refund_M":8.88},{"ym":"2015-06","return_qty":1640,"refund_M":8.22},{"ym":"2015-12","return_qty":967,"refund_M":3.36},{"ym":"2016-05","return_qty":1768,"refund_M":8.5},{"ym":"2016-06","return_qty":1750,"refund_M":8.58},{"ym":"2016-12","return_qty":800,"refund_M":2.91},{"ym":"2017-06","return_qty":1584,"refund_M":8.18},{"ym":"2017-12","return_qty":691,"refund_M":2.58},{"ym":"2018-06","return_qty":1630,"refund_M":8.69},{"ym":"2018-12","return_qty":448,"refund_M":1.99},{"ym":"2019-05","return_qty":879,"refund_M":5.17},{"ym":"2019-12","return_qty":341,"refund_M":1.36},{"ym":"2020-05","return_qty":770,"refund_M":5.19},{"ym":"2020-12","return_qty":290,"refund_M":1.51},{"ym":"2021-06","return_qty":780,"refund_M":4.78},{"ym":"2021-12","return_qty":271,"refund_M":1.28},{"ym":"2022-05","return_qty":681,"refund_M":4.11},{"ym":"2022-12","return_qty":284,"refund_M":1.51}];
+const YEARS=[2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022];
+
+// CORRECTED DATA — GP = qty×unit_price − qty×cogs (actual transaction margin, not catalog)
+// All CAT_PROF, CAT_GM, SEG_GM recomputed from order_items.csv unit_price field
+// Total GP sums to 2,267B matching sales.csv (Revenue − COGS) exactly
+const CAT_PROF={
+  Casual:    [2.17,4.31,3.21,3.8,4.56,4.59,7.91,5.38,4.05,6.42,7.7],
+  Outdoor:   [35.08,47.85,56.15,56.55,56.73,47.26,35.78,21.98,20.06,15.5,15.58],
+  Streetwear:[114.65,134.17,232.5,156.53,255.06,157.8,252.97,99.19,140.45,75.33,120.03],
+  GenZ:      [2.14,4.86,5.39,7.61,7.73,7.12,11.28,5.05,3.86,4.67,6.02]
+};
+const CAT_GM={
+  Casual:    [18.5,14.8,10.0,9.7,9.9,8.8,11.2,12.3,11.0,14.2,14.2],
+  Outdoor:   [21.6,14.6,15.8,16.7,17.5,15.9,17.3,14.8,16.6,14.7,14.8],
+  Streetwear:[20.5,10.5,16.0,10.6,15.1,10.4,16.7,10.8,16.1,8.7,12.2],
+  GenZ:      [22.5,18.1,18.3,20.0,19.6,18.4,19.5,19.6,17.5,17.5,20.5]
+};
+const SEG_GM={
+  Standard:   [22.6,11.4,18.8,18.8,26.3,18.4,21.2,8.1,13.8,7.9,14.9],
+  Premium:    [17.1,12.2,10.7,9.6,12.9,9.8,11.0,8.9,12.1,7.8,7.1],
+  Balanced:   [19.2,8.4,16.0,11.1,14.1,10.7,17.7,12.5,17.3,7.2,10.4],
+  Performance:[16.5,8.5,14.4,7.9,14.8,10.1,14.6,6.7,13.2,8.9,12.6],
+  Everyday:   [22.6,12.6,16.5,11.2,15.5,9.9,16.7,10.9,15.5,11.5,16.0],
+  Activewear: [22.5,15.0,16.7,18.2,19.0,17.4,18.8,16.5,18.0,16.9,19.0],
+  Trendy:     [22.5,18.1,18.3,20.0,19.6,18.4,19.5,19.6,17.5,17.5,20.5]
+};
+const SKU_NAMES=['SaigonFlex UM-43','UrbanVN UE-05','SaigonFlex UC-69','SaigonFlex UM-48','SaigonFlex UM-38','HanoiStreet RP-21'];
+const SKU_DATA={
+  'SaigonFlex UM-43':  [0.0,0.0,0.0,0.451,14.207,27.916,32.07,25.225,22.549,7.926,0.112],
+  'UrbanVN UE-05':     [1.746,6.643,10.475,10.444,15.142,13.188,11.462,3.605,1.999,1.161,1.814],
+  'SaigonFlex UC-69':  [2.348,3.966,12.414,10.284,9.729,5.834,5.069,2.064,1.797,1.546,1.637],
+  'SaigonFlex UM-48':  [3.163,3.911,3.492,2.67,3.971,7.94,7.356,5.872,5.756,3.35,0.016],
+  'SaigonFlex UM-38':  [1.368,1.672,3.063,1.338,3.614,10.613,9.474,5.705,4.395,2.285,0.07],
+  'HanoiStreet RP-21': [4.513,6.625,6.347,5.126,2.239,3.741,3.954,3.231,2.868,1.933,1.137]
+};
+const SCATTER=[{"product_name":"SaigonFlex UM-92","category":"Streetwear","revenue_M":398.21,"profit_M":31.24,"gm_pct":7.8},{"product_name":"HanoiStreet UM-10","category":"Streetwear","revenue_M":342.26,"profit_M":-8.37,"gm_pct":-2.4},{"product_name":"SaigonFlex UM-43","category":"Streetwear","revenue_M":340.71,"profit_M":130.46,"gm_pct":38.3},{"product_name":"SaigonFlex UM-80","category":"Streetwear","revenue_M":267.39,"profit_M":39.37,"gm_pct":14.7},{"product_name":"SaigonFlex UM-96","category":"Streetwear","revenue_M":251.82,"profit_M":-5.45,"gm_pct":-2.2},{"product_name":"SaigonFlex UC-69","category":"Streetwear","revenue_M":207.93,"profit_M":56.69,"gm_pct":27.3},{"product_name":"SaigonFlex UM-11","category":"Streetwear","revenue_M":201.82,"profit_M":-4.26,"gm_pct":-2.1},{"product_name":"SaigonFlex UM-54","category":"Streetwear","revenue_M":185.25,"profit_M":4.88,"gm_pct":2.6},{"product_name":"UrbanVN UE-05","category":"Streetwear","revenue_M":185.08,"profit_M":77.68,"gm_pct":42.0},{"product_name":"SaigonFlex UM-01","category":"Streetwear","revenue_M":178.2,"profit_M":3.23,"gm_pct":1.8},{"product_name":"VietMotion UE-06","category":"Streetwear","revenue_M":177.88,"profit_M":28.4,"gm_pct":16.0},{"product_name":"HanoiStreet UE-36","category":"Streetwear","revenue_M":168.3,"profit_M":-5.51,"gm_pct":-3.3},{"product_name":"VietMotion UE-05","category":"Streetwear","revenue_M":165.89,"profit_M":3.97,"gm_pct":2.4},{"product_name":"UrbanVN UE-14","category":"Streetwear","revenue_M":160.08,"profit_M":-3.96,"gm_pct":-2.5},{"product_name":"SaigonFlex UC-74","category":"Streetwear","revenue_M":154.97,"profit_M":11.84,"gm_pct":7.6},{"product_name":"SaigonFlex UC-16","category":"Streetwear","revenue_M":148.83,"profit_M":-3.37,"gm_pct":-2.3},{"product_name":"SaigonFlex UC-00","category":"Streetwear","revenue_M":148.19,"profit_M":12.45,"gm_pct":8.4},{"product_name":"UrbanVN UE-15","category":"Streetwear","revenue_M":140.77,"profit_M":-4.04,"gm_pct":-2.9},{"product_name":"HanoiStreet UE-16","category":"Streetwear","revenue_M":137.86,"profit_M":-3.0,"gm_pct":-2.2},{"product_name":"SaigonFlex UM-01","category":"Streetwear","revenue_M":133.29,"profit_M":-4.04,"gm_pct":-3.0},{"product_name":"SaigonFlex UM-12","category":"Streetwear","revenue_M":132.92,"profit_M":-4.06,"gm_pct":-3.1},{"product_name":"UrbanVN UE-24","category":"Streetwear","revenue_M":124.49,"profit_M":14.16,"gm_pct":11.4},{"product_name":"SaigonFlex UM-48","category":"Streetwear","revenue_M":123.95,"profit_M":47.5,"gm_pct":38.3},{"product_name":"SaigonFlex UM-38","category":"Streetwear","revenue_M":114.0,"profit_M":43.6,"gm_pct":38.2},{"product_name":"SaigonFlex UC-01","category":"Streetwear","revenue_M":107.45,"profit_M":9.25,"gm_pct":8.6},{"product_name":"HanoiStreet UM-03","category":"Streetwear","revenue_M":107.07,"profit_M":7.5,"gm_pct":7.0},{"product_name":"SaigonFlex UM-50","category":"Streetwear","revenue_M":96.25,"profit_M":25.0,"gm_pct":26.0},{"product_name":"SaigonFlex UC-41","category":"Streetwear","revenue_M":94.97,"profit_M":-0.68,"gm_pct":-0.7},{"product_name":"HanoiStreet RP-22","category":"Outdoor","revenue_M":94.49,"profit_M":9.39,"gm_pct":9.9},{"product_name":"HanoiStreet UC-40","category":"Streetwear","revenue_M":93.33,"profit_M":9.79,"gm_pct":10.5},{"product_name":"HanoiStreet RP-21","category":"Outdoor","revenue_M":93.29,"profit_M":41.72,"gm_pct":44.7},{"product_name":"SaigonFlex UC-39","category":"Streetwear","revenue_M":92.69,"profit_M":17.89,"gm_pct":19.3},{"product_name":"SaigonFlex UM-04","category":"Streetwear","revenue_M":90.69,"profit_M":35.33,"gm_pct":39.0},{"product_name":"HanoiStreet UC-56","category":"Streetwear","revenue_M":89.69,"profit_M":5.33,"gm_pct":5.9},{"product_name":"SaigonFlex UC-22","category":"Streetwear","revenue_M":87.87,"profit_M":-1.85,"gm_pct":-2.1},{"product_name":"SaigonFlex UM-37","category":"Streetwear","revenue_M":81.83,"profit_M":-1.65,"gm_pct":-2.0},{"product_name":"VietMotion RS-08","category":"Outdoor","revenue_M":78.38,"profit_M":5.91,"gm_pct":7.5},{"product_name":"SaigonFlex UC-61","category":"Streetwear","revenue_M":74.84,"profit_M":25.44,"gm_pct":34.0},{"product_name":"SaigonFlex UM-14","category":"Streetwear","revenue_M":73.94,"profit_M":-0.91,"gm_pct":-1.2},{"product_name":"VietMotion RS-02","category":"Outdoor","revenue_M":73.32,"profit_M":-0.78,"gm_pct":-1.1},{"product_name":"SaigonFlex UC-24","category":"Streetwear","revenue_M":70.27,"profit_M":5.04,"gm_pct":7.2},{"product_name":"VietMotion UC-07","category":"Streetwear","revenue_M":68.38,"profit_M":25.71,"gm_pct":37.6},{"product_name":"SaigonFlex UC-80","category":"Streetwear","revenue_M":68.08,"profit_M":25.12,"gm_pct":36.9},{"product_name":"SaigonFlex UM-72","category":"Streetwear","revenue_M":66.87,"profit_M":26.12,"gm_pct":39.1},{"product_name":"SaigonFlex UC-09","category":"Streetwear","revenue_M":66.35,"profit_M":9.22,"gm_pct":13.9},{"product_name":"MekongFit UE-18","category":"Streetwear","revenue_M":65.86,"profit_M":-1.42,"gm_pct":-2.2},{"product_name":"SaigonFlex UC-64","category":"Streetwear","revenue_M":65.86,"profit_M":-2.27,"gm_pct":-3.4},{"product_name":"SaigonFlex UC-13","category":"Streetwear","revenue_M":64.0,"profit_M":9.43,"gm_pct":14.7},{"product_name":"SaigonFlex UC-12","category":"Streetwear","revenue_M":63.56,"profit_M":26.12,"gm_pct":41.1},{"product_name":"SaigonFlex UM-15","category":"Streetwear","revenue_M":62.01,"profit_M":-0.56,"gm_pct":-0.9}];
+
+// ── Chart Config (Remove 0 and 0K) ─────────────────────────────
+Chart.defaults.font.family="'IBM Plex Sans',sans-serif";
+Chart.defaults.color='#6B7280';
+const C={
+  b:'#D4AF37', g:'#0D9488', a:'#3B82F6', r:'#E11D48', p:'#8B5CF6',
+  m:'#6B7280',s:'#9CA3AF',t:'#F3F4F6',bd:'#2D3342',bg2:'#232730'
+};
+const TT={backgroundColor:'#1A1D24',borderColor:'#2D3342',borderWidth:1,titleColor:C.t,bodyColor:C.s,padding:9,titleFont:{weight:'600',size:11},bodyFont:{size:10}};
+
+function mk(id,type,data,opts={}){
+  function deep(a,b){const r={...a};for(const k in b)r[k]=(a[k]&&typeof a[k]==='object'&&!Array.isArray(a[k]))?deep(a[k],b[k]):b[k];return r;}
+  
+  const SX={ticks:{color:C.m,font:{size:10},callback:function(val,idx){let lbl=this.getLabelForValue(val);if(typeof lbl==='string'&&lbl!=='')return lbl;return (val===0&&idx===0)?'':lbl;}},grid:{color:'rgba(45,51,66,.6)'}};
+  const SY={ticks:{color:C.m,font:{size:10},callback:function(val){return (val===0)?'':val;}},grid:{color:'rgba(45,51,66,.6)'}};
+  
+  const base={responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:C.m,font:{size:10},boxWidth:9,padding:10}},tooltip:TT},scales:{x:{...SX},y:{...SY}}};
+  if(opts.scales){for(const k in opts.scales){const base_s=k==='x'?SX:SY;opts.scales[k]={...base_s,...opts.scales[k]};}}
+  const o=deep(base,opts);
+  if(opts.plugins)o.plugins=Object.assign({},base.plugins,opts.plugins);
+  return new Chart(document.getElementById(id),{type,data,options:o});
+}
+
+// ══ TAB 0 ══
+const mainC=mk('cMain','line',{
+  labels:MONTHLY.map(d=>d.ym),
+  datasets:[
+    {label:'Revenue',data:MONTHLY.map(d=>d.rev),borderColor:C.b,backgroundColor:'rgba(212,175,55,.06)',fill:true,tension:.35,pointRadius:0,borderWidth:1.5},
+    {label:'Gross Profit',data:MONTHLY.map(d=>d.gp),borderColor:C.g,backgroundColor:'rgba(13,148,136,.06)',fill:true,tension:.35,pointRadius:0,borderWidth:1.5},
+    {label:'MA-12',data:MONTHLY.map(d=>MA12M[d.ym]||null),borderColor:'rgba(255,255,255,.3)',borderWidth:1.5,borderDash:[4,3],pointRadius:0,tension:.3}
+  ]
+},{plugins:{legend:{position:'top'}},scales:{x:{ticks:{maxTicksLimit:18,font:{size:9}}},y:{ticks:{callback:function(v){return v===0?'':v+'M'}}}}});
+const SEA=[2.6,3.5,4.9,6.5,6.6,6.4,4.7,4.4,3.8,3.3,2.6,2.5];
+const MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+mk('cSea','bar',{labels:MN,datasets:[{label:'Avg Rev (M)',data:SEA,backgroundColor:SEA.map(v=>v>=6?C.b:v<=2.6?'rgba(225,29,72,.45)':'rgba(212,175,55,.38)'),borderRadius:3,borderSkipped:false}]},{plugins:{legend:{display:false}},scales:{y:{ticks:{callback:function(v){return v===0?'':v+'M'}}}}});
+mk('cAnn','bar',{labels:ANNUAL.map(d=>String(d.year)),datasets:[{label:'Revenue (B)',data:ANNUAL.map(d=>d.rev_B),backgroundColor:ANNUAL.map(d=>d.year===2016?C.b:d.year>=2019?'rgba(225,29,72,.4)':'rgba(212,175,55,.4)'),borderRadius:3,borderSkipped:false}]},{plugins:{legend:{display:false}},scales:{y:{ticks:{callback:function(v){return v===0?'':v+'B'}}}}});
+mk('cGPM','line',{labels:ANNUAL.map(d=>String(d.year)),datasets:[{label:'GP Margin %',data:ANNUAL.map(d=>d.gpm),borderColor:C.a,backgroundColor:'rgba(59,130,246,.06)',fill:true,tension:.3,pointRadius:3,pointBackgroundColor:ANNUAL.map(d=>d.gpm<11?C.r:C.a),borderWidth:2},{label:'Avg 13.8%',data:ANNUAL.map(()=>13.8),borderColor:'rgba(255,255,255,.2)',borderWidth:1,borderDash:[5,3],pointRadius:0}]},{plugins:{legend:{display:false}},scales:{y:{min:0,max:24,ticks:{callback:function(v){return v===0?'':v+'%'}}}}});
+
+let vis=[true,true,true];
+function tgl(i){vis[i]=!vis[i];mainC.data.datasets[i].hidden=!vis[i];mainC.update();document.getElementById(['b0','b1','b2'][i]).classList.toggle('on',vis[i]);}
+function fyr(yr,btn){document.querySelectorAll('#s0 .fbar .fbtn').forEach(b=>{if(['All','2013','2016','2019','2022'].includes(b.textContent))b.classList.remove('on');});btn.classList.add('on');const f=yr==='all'?MONTHLY:MONTHLY.filter(d=>d.ym.startsWith(yr));mainC.data.labels=f.map(d=>d.ym);mainC.data.datasets[0].data=f.map(d=>d.rev);mainC.data.datasets[1].data=f.map(d=>d.gp);mainC.data.datasets[2].data=f.map(d=>MA12M[d.ym]||null);mainC.update();}
+
+// ══ TAB 1 ══
+mk('cA2','bar',{labels:ANNUAL.map(d=>String(d.year)),datasets:[{label:'Revenue (B)',data:ANNUAL.map(d=>d.rev_B),backgroundColor:'rgba(212,175,55,.6)',borderRadius:3,borderSkipped:false},{label:'Gross Profit (B)',data:ANNUAL.map(d=>d.gp_B),backgroundColor:'rgba(13,148,136,.6)',borderRadius:3,borderSkipped:false}]},{scales:{y:{ticks:{callback:function(v){return v===0?'':v+'B'}}}}});
+mk('cGPM2','line',{labels:ANNUAL.map(d=>String(d.year)),datasets:[{label:'GP Margin %',data:ANNUAL.map(d=>d.gpm),borderColor:C.a,backgroundColor:'rgba(59,130,246,.06)',fill:true,tension:.3,pointRadius:4,pointBackgroundColor:ANNUAL.map(d=>d.gpm<11?C.r:C.a),borderWidth:2},{label:'Avg 13.8%',data:ANNUAL.map(()=>13.8),borderColor:'rgba(255,255,255,.2)',borderWidth:1,borderDash:[5,3],pointRadius:0}]},{plugins:{legend:{position:'top'}},scales:{y:{min:0,max:24,ticks:{callback:function(v){return v===0?'':v+'%'}}}}});
+mk('cPM','bar',{labels:['Credit Card','PayPal','COD','Apple Pay','Bank Transfer'],datasets:[{label:'Orders',data:[356352,97018,96681,64763,32131],backgroundColor:[C.b,'rgba(212,175,55,.7)','rgba(212,175,55,.5)','rgba(212,175,55,.35)','rgba(212,175,55,.2)'],borderRadius:3,borderSkipped:false}]},{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{callback:function(v){return v===0?'':(v/1000).toFixed(0)+'K'}}}}});
+mk('cSea2','bar',{labels:MN,datasets:[{label:'Avg Revenue (M)',data:SEA,backgroundColor:SEA.map(v=>v>=6?C.b:v<=2.6?'rgba(225,29,72,.45)':'rgba(212,175,55,.38)'),borderRadius:3,borderSkipped:false}]},{plugins:{legend:{display:false}},scales:{y:{ticks:{callback:function(v){return v===0?'':v+'M'}}}}});
+
+// ══ TAB 2 ══
+let curM='conv';
+const wC=mk('cWM','line',{labels:MWEB.map(d=>d.ym),datasets:[{label:'Conversion Rate (%)',data:MWEB.map(d=>d.conv_rate),borderColor:C.b,backgroundColor:'rgba(212,175,55,.06)',fill:true,tension:.35,pointRadius:2,pointBackgroundColor:C.b,borderWidth:1.5}]},{plugins:{legend:{display:false}},scales:{x:{ticks:{font:{size:9}}},y:{ticks:{callback:function(v){return v===0?'':v.toFixed(2)+'%'}}}}});
+function twM(m){curM=m;['bwc','bwb','bwd'].forEach(id=>document.getElementById(id).classList.remove('on'));document.getElementById({conv:'bwc',bounce:'bwb',dur:'bwd'}[m]).classList.add('on');const cfg={conv:{f:'conv_rate',l:'Conversion %',c:C.b,fmt:function(v){return v===0?'':v.toFixed(2)+'%'}},bounce:{f:'bounce_pct',l:'Bounce Rate %',c:C.r,fmt:function(v){return v===0?'':v.toFixed(3)+'%'}},dur:{f:'duration_min',l:'Duration (min)',c:C.g,fmt:function(v){return v===0?'':v.toFixed(2)+'m'}}}[m];wC.data.datasets[0].data=MWEB.map(d=>d[cfg.f]);wC.data.datasets[0].label=cfg.l;wC.data.datasets[0].borderColor=cfg.c;wC.data.datasets[0].backgroundColor=cfg.c+'15';wC.options.scales.y.ticks.callback=cfg.fmt;wC.update();}
+mk('cSO','line',{labels:MWEB.map(d=>d.ym),datasets:[{label:'Sessions (K)',data:MWEB.map(d=>d.sessions_K),borderColor:'rgba(212,175,55,.7)',tension:.35,pointRadius:0,borderWidth:1.5,yAxisID:'y'},{label:'Orders (K)',data:MWEB.map(d=>d.orders_K),borderColor:C.g,tension:.35,pointRadius:0,borderWidth:2,yAxisID:'y2'}]},{plugins:{legend:{position:'top'}},scales:{x:{ticks:{font:{size:9}}},y:{position:'left',ticks:{callback:function(v){return v===0?'':v+'K'}}},y2:{position:'right',ticks:{callback:function(v){return v===0?'':v+'K'}},grid:{drawOnChartArea:false}}}});
+mk('cSQ','bar',{labels:['Organic','Paid','Social','Email','Referral','Direct'],datasets:[{label:'Bounce Rate (×100)',data:[0.45,0.448,0.448,0.446,0.45,0.451].map(v=>+(v*100).toFixed(2)),backgroundColor:'rgba(225,29,72,.55)',borderRadius:2,borderSkipped:false},{label:'Pages/Session',data:[4.32,4.34,4.3,4.34,4.4,4.38],backgroundColor:'rgba(212,175,55,.55)',borderRadius:2,borderSkipped:false},{label:'Duration (min)',data:[3.52,3.49,3.5,3.55,3.46,3.46],backgroundColor:'rgba(13,148,136,.55)',borderRadius:2,borderSkipped:false}]},{plugins:{legend:{position:'top'}},scales:{y:{ticks:{callback:function(v){return v===0?'':v.toFixed(2)}}}}});
+mk('cSV','bar',{labels:['Organic','Paid','Social','Email','Referral','Direct'],datasets:[{label:'Sessions (M)',data:[27.2,19.6,15.8,12.8,9.5,6.6],backgroundColor:'rgba(212,175,55,.6)',borderRadius:3,borderSkipped:false,yAxisID:'y'},{label:'Orders (K)',data:[181.5,141.7,129.7,77.6,64.6,52.0],backgroundColor:'rgba(13,148,136,.6)',borderRadius:3,borderSkipped:false,yAxisID:'y2'}]},{scales:{y:{position:'left',ticks:{callback:function(v){return v===0?'':v+'M'}}},y2:{position:'right',ticks:{callback:function(v){return v===0?'':v+'K'}},grid:{drawOnChartArea:false}}}});
+
+// ══ TAB 3 ══
+mk('cGen','doughnut',{labels:['Female (48.9%)','Male (47.1%)','Non-binary (4%)'],datasets:[{data:[59640,57457,4833],backgroundColor:[C.b,C.g,'rgba(59,130,246,.7)'],borderColor:'#111318',borderWidth:3,hoverOffset:6}]},{scales:{},plugins:{legend:{position:'bottom',labels:{font:{size:10},padding:10}}}});
+mk('cAge','bar',{labels:['18–24','25–34','35–44','45–54','55+'],datasets:[{label:'Customers',data:[17039,36342,31920,23172,13457],backgroundColor:['rgba(212,175,55,.3)','rgba(212,175,55,.8)',C.b,'rgba(212,175,55,.6)','rgba(212,175,55,.3)'],borderRadius:3,borderSkipped:false}]},{plugins:{legend:{display:false}},scales:{y:{ticks:{callback:function(v){return v===0?'':(v/1000).toFixed(0)+'K'}}}}});
+mk('cAch','bar',{labels:['Organic','Social','Paid','Email','Referral','Direct'],datasets:[{label:'Customers',data:[36450,24448,24285,14674,12270,9803],backgroundColor:[C.b,'rgba(212,175,55,.7)','rgba(212,175,55,.55)','rgba(212,175,55,.4)','rgba(212,175,55,.27)','rgba(212,175,55,.16)'],borderRadius:3,borderSkipped:false}]},{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{callback:function(v){return v===0?'':(v/1000).toFixed(0)+'K'}}}}});
+const CI=[{c:'Cam Pha',n:4398},{c:'Thai Nguyen',n:4347},{c:'Phu Ly',n:4243},{c:'Hanoi',n:4240},{c:'Ha Long',n:4236},{c:'Bac Ninh',n:4172},{c:'Hai Phong',n:4170},{c:'Nam Dinh',n:4169},{c:'Bac Giang',n:4160},{c:'Ninh Binh',n:4081}];
+const cEl=document.getElementById('cityHB');
+CI.forEach(({c,n})=>{cEl.innerHTML+=`<div class="hbi"><div class="hbr"><span class="hbl">${c}</span><span class="hbv">${n.toLocaleString()}</span></div><div class="hbt"><div class="hbf" style="width:${(n/4398*100).toFixed(0)}%;background:var(--c-gold)"></div></div></div>`;});
+mk('cOS2','bar',{labels:['Organic','Paid','Social','Email','Referral','Direct'],datasets:[{label:'Orders',data:[181495,141652,129710,77572,64565,51951],backgroundColor:[C.b,'rgba(212,175,55,.7)','rgba(212,175,55,.6)','rgba(212,175,55,.4)','rgba(212,175,55,.3)','rgba(212,175,55,.2)'],borderRadius:3,borderSkipped:false}]},{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{callback:function(v){return v===0?'':(v/1000).toFixed(0)+'K'}}}}});
+
+// ══ TAB 4 — PROFITABILITY ══
+mk('cCatProf','bar',{
+  labels:YEARS.map(String),
+  datasets:[
+    {label:'Streetwear',data:CAT_PROF.Streetwear,backgroundColor:C.b,borderRadius:2,borderSkipped:false},
+    {label:'Outdoor',   data:CAT_PROF.Outdoor,   backgroundColor:'rgba(13,148,136,.7)',borderRadius:2,borderSkipped:false},
+    {label:'GenZ',      data:CAT_PROF.GenZ,      backgroundColor:'rgba(225,29,72,.7)',borderRadius:2,borderSkipped:false},
+    {label:'Casual',    data:CAT_PROF.Casual,    backgroundColor:'rgba(139,92,246,.7)',borderRadius:2,borderSkipped:false}
+  ]
+},{
+  plugins:{legend:{position:'top'}},
+  scales:{x:{stacked:true},y:{stacked:true,ticks:{callback:function(v){return v===0?'':v+'M'}}}}
+});
+
+mk('cCatGM','line',{
+  labels:YEARS.map(String),
+  datasets:[
+    {label:'Casual',     data:CAT_GM.Casual,     borderColor:C.p,backgroundColor:'transparent',tension:.3,pointRadius:3,borderWidth:2},
+    {label:'Outdoor',    data:CAT_GM.Outdoor,    borderColor:C.g,backgroundColor:'transparent',tension:.3,pointRadius:3,borderWidth:2},
+    {label:'Streetwear', data:CAT_GM.Streetwear, borderColor:C.b,backgroundColor:'transparent',tension:.3,pointRadius:3,borderWidth:2},
+    {label:'GenZ',       data:CAT_GM.GenZ,       borderColor:C.r,backgroundColor:'transparent',tension:.3,pointRadius:3,borderWidth:2}
+  ]
+},{
+  plugins:{legend:{position:'top'}},
+  scales:{y:{min:0,max:25,ticks:{callback:function(v){return v===0?'':v+'%'}}}}
+});
+
+let segMode='gm';
+let segC=mk('cSegProf','bar',{
+  labels:YEARS.map(String),
+  datasets:[
+    {label:'Standard',   data:SEG_GM.Standard,   backgroundColor:C.b,borderRadius:2,borderSkipped:false},
+    {label:'Premium',    data:SEG_GM.Premium,    backgroundColor:'rgba(13,148,136,.7)',borderRadius:2,borderSkipped:false},
+    {label:'Balanced',   data:SEG_GM.Balanced,   backgroundColor:'rgba(59,130,246,.7)',borderRadius:2,borderSkipped:false},
+    {label:'Performance',data:SEG_GM.Performance,backgroundColor:'rgba(139,92,246,.65)',borderRadius:2,borderSkipped:false},
+    {label:'Everyday',   data:SEG_GM.Everyday,   backgroundColor:'rgba(225,29,72,.6)',borderRadius:2,borderSkipped:false},
+    {label:'Activewear', data:SEG_GM.Activewear, backgroundColor:'rgba(212,175,55,.4)',borderRadius:2,borderSkipped:false},
+    {label:'Trendy',     data:SEG_GM.Trendy,     backgroundColor:'rgba(100,116,139,.5)',borderRadius:2,borderSkipped:false},
+  ]
+},{plugins:{legend:{position:'top',labels:{font:{size:9},padding:8}}},scales:{x:{stacked:false},y:{stacked:false,min:0,max:30,ticks:{callback:function(v){return v===0?'':v+'%'}}}}});
+
+function tglSeg(mode){
+  segMode=mode;
+  document.getElementById('bseg1').classList.toggle('on',mode==='gm');
+  const src=SEG_GM;
+  const names=['Standard','Premium','Balanced','Performance','Everyday','Activewear','Trendy'];
+  segC.data.datasets.forEach((ds,i)=>{ds.data=src[names[i]]||src[ds.label]||[];});
+  segC.update();
+}
+
+mk('cScatter','scatter',{
+  datasets:[{
+    label:'SKU (Top 50)',
+    data:SCATTER.map(d=>({x:d.revenue_M,y:d.profit_M,name:d.product_name})),
+    backgroundColor:SCATTER.map(d=>d.profit_M<0?'rgba(225,29,72,.7)':'rgba(212,175,55,.7)'),
+    pointRadius:SCATTER.map(d=>Math.max(3,Math.abs(d.profit_M)/10+3)),
+    pointHoverRadius:8
+  },{label:'Breakeven',data:[{x:0,y:0},{x:400,y:0}],type:'line',borderColor:'rgba(255,255,255,.2)',borderWidth:1,borderDash:[4,3],pointRadius:0,backgroundColor:'transparent'}]
+},{
+  plugins:{
+    legend:{display:false},
+    tooltip:{callbacks:{label:d=>{const sc=SCATTER[d.dataIndex];return sc?[sc.product_name,`Rev: ${sc.revenue_M}M · Profit: ${sc.profit_M}M (${sc.gm_pct}%)`]:'';}}}
+  },
+  scales:{
+    x:{title:{display:true,text:'Revenue (Million VND)',color:C.m,font:{size:10}},ticks:{callback:function(v){return v===0?'':v+'M'}}},
+    y:{title:{display:true,text:'Profit (Million VND)',color:C.m,font:{size:10}},ticks:{callback:function(v){return v===0?'':v+'M'}}}
+  }
+});
+
+let skuC=mk('cSKUTrend','line',{
+  labels:YEARS.map(String),
+  datasets:SKU_NAMES.map((name,i)=>({
+    label:name.replace('SaigonFlex ','SF ').replace('UrbanVN ','UV ').replace('HanoiStreet ','HS '),
+    data:SKU_DATA[name],
+    borderColor:[C.b,C.g,C.a,C.r,C.p,'rgba(225,29,72,.85)'][i],
+    backgroundColor:'transparent',tension:.3,pointRadius:3,pointHoverRadius:5,borderWidth:2
+  }))
+},{plugins:{legend:{position:'top',labels:{font:{size:9},padding:8}}},scales:{y:{ticks:{callback:function(v){return v===0?'':v+'M'}}}}});
+
+function fSKU(k,btn){
+  document.querySelectorAll('#s4 .fbar .fbtn').forEach(b=>{if(['All','UM43','UE05','UC69','RP21'].includes(b.textContent)||['all','UM-43','UE-05','UC-69','RP-21'].includes(b.textContent))b.classList.remove('on');});
+  btn.classList.add('on');
+  skuC.data.datasets.forEach((ds,i)=>{
+    const name=SKU_NAMES[i];
+    ds.hidden=k!=='all'&&!name.includes(k.replace('UM43','UM-43').replace('UE05','UE-05').replace('UC69','UC-69').replace('RP21','RP-21'));
+  });
+  skuC.update();
+}
+
+// ══ TAB 5 ══
+mk('cRC','bar',{labels:['Streetwear','Outdoor','GenZ','Casual'],datasets:[{label:'Return Qty',data:[59801,40417,5869,3499],backgroundColor:['rgba(225,29,72,.75)','rgba(225,29,72,.55)','rgba(225,29,72,.35)','rgba(225,29,72,.2)'],borderRadius:3,borderSkipped:false,yAxisID:'y'},{label:'Refund (M)',data:[406.71,78.72,11.15,14.03],type:'line',borderColor:C.b,pointRadius:4,pointBackgroundColor:C.b,borderWidth:2,yAxisID:'y2',backgroundColor:'transparent'}]},{scales:{y:{position:'left',ticks:{callback:function(v){return v===0?'':(v/1000).toFixed(0)+'K'}}},y2:{position:'right',ticks:{callback:function(v){return v===0?'':v+'M'}},grid:{drawOnChartArea:false}}}});
+mk('cRS','bar',{labels:['Activewear','Everyday','Balanced','Performance','Trendy','Premium','All-weather','Standard'],datasets:[{label:'Return Qty',data:[36024,27953,15105,15097,5869,4637,3255,1646],backgroundColor:'rgba(225,29,72,.6)',borderRadius:2,borderSkipped:false,yAxisID:'y'},{label:'Refund (M)',data:[65.18,169.75,153.35,76.4,11.15,14.76,12.8,7.21],type:'line',borderColor:C.b,pointRadius:3,pointBackgroundColor:C.b,borderWidth:2,yAxisID:'y2',backgroundColor:'transparent'}]},{indexAxis:'y',scales:{x:{ticks:{callback:function(v){return v===0?'':(v/1000).toFixed(0)+'K'}}},y:{ticks:{font:{size:10}}},y2:{position:'right',ticks:{callback:function(v){return v===0?'':v+'M'}},grid:{drawOnChartArea:false}}}});
+mk('cRSz','bar',{labels:['S (3.46%)','M (3.40%)','L (3.43%)','XL (3.36%)'],datasets:[{label:'Return Rate %',data:[3.46,3.40,3.43,3.36],backgroundColor:[C.r,'rgba(225,29,72,.65)','rgba(225,29,72,.5)','rgba(225,29,72,.35)'],borderRadius:5,borderSkipped:false}]},{plugins:{legend:{display:false}},scales:{y:{min:3.2,max:3.6,ticks:{callback:function(v){return v===0?'':v.toFixed(2)+'%'}}}}});
+mk('cRRsn','doughnut',{labels:['Wrong Size 35%','Defective 20.1%','Not as Desc. 17.6%','Changed Mind 17.4%','Late Delivery 10%'],datasets:[{data:[13967,8020,7035,6931,3986],backgroundColor:[C.r,C.b,C.g,C.a,C.m],borderColor:'#111318',borderWidth:2.5,hoverOffset:5}]},{scales:{},plugins:{legend:{position:'right',labels:{font:{size:9},padding:6,boxWidth:8}}}});
+mk('cRPiv','bar',{labels:['Streetwear','Outdoor','GenZ','Casual'],datasets:[{label:'Wrong Size',data:[20744,13957,2098,1243],backgroundColor:C.r,borderRadius:1,borderSkipped:false},{label:'Defective',data:[12028,8351,1170,725],backgroundColor:C.b,borderRadius:1,borderSkipped:false},{label:'Not as Desc.',data:[10696,7061,1030,571],backgroundColor:C.g,borderRadius:1,borderSkipped:false},{label:'Changed Mind',data:[10526,7071,928,619],backgroundColor:C.a,borderRadius:1,borderSkipped:false},{label:'Late Delivery',data:[5807,3977,643,341],backgroundColor:'rgba(100,116,139,.45)',borderRadius:1,borderSkipped:false}]},{plugins:{legend:{position:'top',labels:{font:{size:9},padding:5}}},scales:{x:{stacked:true,ticks:{font:{size:9}}},y:{stacked:true,ticks:{callback:function(v){return v===0?'':(v/1000).toFixed(0)+'K'}}}}});
+mk('cRMon','line',{labels:RETMON.map(d=>d.ym),datasets:[{label:'Return Qty',data:RETMON.map(d=>d.return_qty),borderColor:C.r,backgroundColor:'rgba(225,29,72,.05)',fill:true,tension:.35,pointRadius:2,borderWidth:1.5,yAxisID:'y'},{label:'Refund (M)',data:RETMON.map(d=>d.refund_M),borderColor:C.b,tension:.35,pointRadius:2,borderWidth:1.5,yAxisID:'y2',backgroundColor:'transparent'}]},{plugins:{legend:{position:'top'}},scales:{x:{ticks:{font:{size:9}}},y:{position:'left',ticks:{callback:function(v){return v===0?'':v.toLocaleString()}}},y2:{position:'right',ticks:{callback:function(v){return v===0?'':v+'M'}},grid:{drawOnChartArea:false}}}});
+
+// ══ TAB 6 ══
+mk('cInvF','bar',{labels:['Casual','GenZ','Outdoor','Streetwear'],datasets:[{label:'Stockout %',data:[66.2,68.3,67.3,67.3],backgroundColor:'rgba(225,29,72,.6)',borderRadius:3,borderSkipped:false},{label:'Overstock %',data:[72.6,71.6,79.9,74.9],backgroundColor:'rgba(212,175,55,.6)',borderRadius:3,borderSkipped:false}]},{scales:{y:{max:90,ticks:{callback:function(v){return v===0?'':v+'%'}}}}});
+mk('cST','bar',{labels:['Standard','Balanced','Trendy','All-weather','Performance','Everyday','Activewear','Premium'],datasets:[{label:'Sell-through %',data:[18.6,17.5,16.8,15.7,15.6,14.8,13.7,13.8],backgroundColor:[C.b,'rgba(212,175,55,.7)','rgba(212,175,55,.6)','rgba(212,175,55,.5)','rgba(212,175,55,.4)','rgba(212,175,55,.3)','rgba(212,175,55,.2)','rgba(212,175,55,.1)'],borderRadius:3,borderSkipped:false}]},{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{callback:function(v){return v===0?'':v+'%'}}},y:{ticks:{font:{size:10}}}}});
+mk('cFR','bar',{labels:['Outdoor','GenZ','Casual','Streetwear'],datasets:[{label:'Fill Rate %',data:[96.3,96.2,96.2,96.0],backgroundColor:[C.g,'rgba(13,148,136,.7)','rgba(13,148,136,.55)','rgba(13,148,136,.4)'],borderRadius:4,borderSkipped:false}]},{plugins:{legend:{display:false}},scales:{y:{min:95.5,max:96.5,ticks:{callback:function(v){return v===0?'':v.toFixed(1)+'%'}}}}});
+
+// ══ TAB 7 ══
+mk('cPR','doughnut',{labels:['No Promo 67%','Promo 33%'],datasets:[{data:[11.0,5.44],backgroundColor:['rgba(212,175,55,.25)',C.b],borderColor:'#111318',borderWidth:3,hoverOffset:7}]},{scales:{},plugins:{legend:{position:'bottom',labels:{font:{size:10},padding:10}}}});
+mk('cPO','doughnut',{labels:['No Promo 61.3%','Promo 38.7%'],datasets:[{data:[438353,276316],backgroundColor:['rgba(13,148,136,.25)',C.g],borderColor:'#111318',borderWidth:3,hoverOffset:7}]},{scales:{},plugins:{legend:{position:'bottom',labels:{font:{size:10},padding:10}}}});
+mk('cPGM','bar',{labels:['Standard','Activewear','Everyday','GenZ/Trendy','Performance','Balanced','Outdoor','Casual','Streetwear'],datasets:[{label:'Actual GM% (transaction)',data:[13.9,18.5,14.3,19.1,13.5,14.8,16.4,11.7,13.2],backgroundColor:['rgba(13,148,136,.8)',C.b,'rgba(212,175,55,.7)','rgba(212,175,55,.55)','rgba(212,175,55,.4)','rgba(212,175,55,.3)','rgba(225,29,72,.4)','rgba(225,29,72,.55)','rgba(225,29,72,.7)'],borderRadius:3,borderSkipped:false},{label:'After 15% Discount',data:[13.9-15*0.86,18.5-15*0.815,14.3-15*0.857,19.1-15*0.809,13.5-15*0.865,14.8-15*0.852,16.4-15*0.836,11.7-15*0.883,13.2-15*0.868].map(v=>+v.toFixed(1)),type:'line',borderColor:'rgba(255,255,255,.28)',borderWidth:1.5,borderDash:[4,3],pointRadius:2,backgroundColor:'transparent'}]},{indexAxis:'y',plugins:{legend:{position:'top'}},scales:{x:{min:-10,max:25,ticks:{callback:function(v){return v===0?'':v+'%'}}},y:{ticks:{font:{size:10}}}}});
+
+// ══ TAB 8 · VẬN HÀNH ══
+const INV_MON=[{"ym":"2012-07","stockout_pct":0.6684,"overstock_pct":0.5949,"avg_dos":93.3,"avg_st":0.2435,"avg_fr":0.9661},{"ym":"2012-08","stockout_pct":0.7092,"overstock_pct":0.3404,"avg_dos":90.0,"avg_st":0.2888,"avg_fr":0.9449},{"ym":"2012-09","stockout_pct":0.6462,"overstock_pct":0.5755,"avg_dos":103.65,"avg_st":0.2436,"avg_fr":0.95},{"ym":"2012-10","stockout_pct":0.6453,"overstock_pct":0.6453,"avg_dos":125.0,"avg_st":0.2206,"avg_fr":0.9526},{"ym":"2012-11","stockout_pct":0.7178,"overstock_pct":0.6861,"avg_dos":140.2,"avg_st":0.1955,"avg_fr":0.9599},{"ym":"2012-12","stockout_pct":0.7038,"overstock_pct":0.5746,"avg_dos":115.0,"avg_st":0.2291,"avg_fr":0.9506},{"ym":"2013-01","stockout_pct":0.6383,"overstock_pct":0.7447,"avg_dos":180.0,"avg_st":0.1783,"avg_fr":0.966},{"ym":"2013-02","stockout_pct":0.7111,"overstock_pct":0.6727,"avg_dos":135.0,"avg_st":0.2071,"avg_fr":0.9561},{"ym":"2013-03","stockout_pct":0.7055,"overstock_pct":0.6044,"avg_dos":115.0,"avg_st":0.2247,"avg_fr":0.957},{"ym":"2013-04","stockout_pct":0.7015,"overstock_pct":0.4301,"avg_dos":90.0,"avg_st":0.2755,"avg_fr":0.9531},{"ym":"2013-05","stockout_pct":0.6814,"overstock_pct":0.5338,"avg_dos":98.25,"avg_st":0.245,"avg_fr":0.956},{"ym":"2013-06","stockout_pct":0.6638,"overstock_pct":0.5894,"avg_dos":105.7,"avg_st":0.2303,"avg_fr":0.9633},{"ym":"2013-07","stockout_pct":0.6866,"overstock_pct":0.6418,"avg_dos":120.0,"avg_st":0.2167,"avg_fr":0.9617},{"ym":"2013-08","stockout_pct":0.6544,"overstock_pct":0.6587,"avg_dos":123.3,"avg_st":0.2115,"avg_fr":0.962},{"ym":"2013-09","stockout_pct":0.6474,"overstock_pct":0.7629,"avg_dos":158.6,"avg_st":0.1839,"avg_fr":0.966},{"ym":"2013-10","stockout_pct":0.6793,"overstock_pct":0.7785,"avg_dos":200.0,"avg_st":0.1655,"avg_fr":0.9569},{"ym":"2013-11","stockout_pct":0.6797,"overstock_pct":0.7887,"avg_dos":260.0,"avg_st":0.1554,"avg_fr":0.9539},{"ym":"2013-12","stockout_pct":0.6912,"overstock_pct":0.7353,"avg_dos":177.2,"avg_st":0.1807,"avg_fr":0.9438},{"ym":"2014-01","stockout_pct":0.6885,"overstock_pct":0.8036,"avg_dos":270.0,"avg_st":0.1416,"avg_fr":0.9634},{"ym":"2014-02","stockout_pct":0.6703,"overstock_pct":0.7694,"avg_dos":234.0,"avg_st":0.1582,"avg_fr":0.9624},{"ym":"2014-03","stockout_pct":0.6674,"overstock_pct":0.7006,"avg_dos":160.1,"avg_st":0.194,"avg_fr":0.9582},{"ym":"2014-04","stockout_pct":0.7051,"overstock_pct":0.5977,"avg_dos":114.0,"avg_st":0.2371,"avg_fr":0.9494},{"ym":"2014-05","stockout_pct":0.7022,"overstock_pct":0.645,"avg_dos":121.0,"avg_st":0.223,"avg_fr":0.9529},{"ym":"2014-06","stockout_pct":0.6587,"overstock_pct":0.7066,"avg_dos":166.7,"avg_st":0.194,"avg_fr":0.9623},{"ym":"2014-07","stockout_pct":0.6837,"overstock_pct":0.7694,"avg_dos":165.55,"avg_st":0.1754,"avg_fr":0.965},{"ym":"2014-08","stockout_pct":0.6466,"overstock_pct":0.6932,"avg_dos":162.0,"avg_st":0.1965,"avg_fr":0.96},{"ym":"2014-09","stockout_pct":0.6842,"overstock_pct":0.8042,"avg_dos":244.1,"avg_st":0.1489,"avg_fr":0.9599},{"ym":"2014-10","stockout_pct":0.6944,"overstock_pct":0.8355,"avg_dos":257.85,"avg_st":0.1435,"avg_fr":0.9595},{"ym":"2014-11","stockout_pct":0.6608,"overstock_pct":0.8446,"avg_dos":285.0,"avg_st":0.1318,"avg_fr":0.9656},{"ym":"2014-12","stockout_pct":0.6519,"overstock_pct":0.7468,"avg_dos":210.0,"avg_st":0.1626,"avg_fr":0.9617},{"ym":"2015-01","stockout_pct":0.707,"overstock_pct":0.8436,"avg_dos":320.8,"avg_st":0.1288,"avg_fr":0.9612},{"ym":"2015-02","stockout_pct":0.6593,"overstock_pct":0.8385,"avg_dos":257.45,"avg_st":0.1431,"avg_fr":0.9617},{"ym":"2015-03","stockout_pct":0.6132,"overstock_pct":0.7922,"avg_dos":203.8,"avg_st":0.1608,"avg_fr":0.9638},{"ym":"2015-04","stockout_pct":0.6967,"overstock_pct":0.6399,"avg_dos":130.8,"avg_st":0.2191,"avg_fr":0.9491},{"ym":"2015-05","stockout_pct":0.6706,"overstock_pct":0.7373,"avg_dos":172.25,"avg_st":0.1785,"avg_fr":0.9591},{"ym":"2015-06","stockout_pct":0.6613,"overstock_pct":0.756,"avg_dos":172.8,"avg_st":0.1756,"avg_fr":0.9624},{"ym":"2015-07","stockout_pct":0.6619,"overstock_pct":0.7996,"avg_dos":210.0,"avg_st":0.1572,"avg_fr":0.9642},{"ym":"2015-08","stockout_pct":0.6512,"overstock_pct":0.7384,"avg_dos":187.75,"avg_st":0.173,"avg_fr":0.959},{"ym":"2015-09","stockout_pct":0.6874,"overstock_pct":0.7776,"avg_dos":230.0,"avg_st":0.1646,"avg_fr":0.9552},{"ym":"2015-10","stockout_pct":0.6802,"overstock_pct":0.8178,"avg_dos":266.75,"avg_st":0.1399,"avg_fr":0.9634},{"ym":"2015-11","stockout_pct":0.7254,"overstock_pct":0.8344,"avg_dos":300.0,"avg_st":0.1336,"avg_fr":0.9617},{"ym":"2015-12","stockout_pct":0.6894,"overstock_pct":0.795,"avg_dos":256.0,"avg_st":0.1472,"avg_fr":0.959},{"ym":"2016-01","stockout_pct":0.703,"overstock_pct":0.8462,"avg_dos":324.0,"avg_st":0.1245,"avg_fr":0.9639},{"ym":"2016-02","stockout_pct":0.6751,"overstock_pct":0.8101,"avg_dos":296.5,"avg_st":0.1341,"avg_fr":0.9636},{"ym":"2016-03","stockout_pct":0.6748,"overstock_pct":0.7853,"avg_dos":233.5,"avg_st":0.1526,"avg_fr":0.9618},{"ym":"2016-04","stockout_pct":0.6466,"overstock_pct":0.6583,"avg_dos":150.0,"avg_st":0.2019,"avg_fr":0.9579},{"ym":"2016-05","stockout_pct":0.6846,"overstock_pct":0.7345,"avg_dos":201.1,"avg_st":0.1762,"avg_fr":0.9588},{"ym":"2016-06","stockout_pct":0.6833,"overstock_pct":0.7072,"avg_dos":181.1,"avg_st":0.1841,"avg_fr":0.9584},{"ym":"2016-07","stockout_pct":0.6968,"overstock_pct":0.7771,"avg_dos":238.95,"avg_st":0.1557,"avg_fr":0.9593},{"ym":"2016-08","stockout_pct":0.6788,"overstock_pct":0.7423,"avg_dos":210.0,"avg_st":0.176,"avg_fr":0.9546},{"ym":"2016-09","stockout_pct":0.7049,"overstock_pct":0.8238,"avg_dos":330.4,"avg_st":0.1328,"avg_fr":0.9551},{"ym":"2016-10","stockout_pct":0.6535,"overstock_pct":0.834,"avg_dos":339.2,"avg_st":0.1313,"avg_fr":0.9656},{"ym":"2016-11","stockout_pct":0.6858,"overstock_pct":0.8316,"avg_dos":331.1,"avg_st":0.1234,"avg_fr":0.9652},{"ym":"2016-12","stockout_pct":0.662,"overstock_pct":0.8072,"avg_dos":274.1,"avg_st":0.1457,"avg_fr":0.9618},{"ym":"2017-01","stockout_pct":0.6994,"overstock_pct":0.8507,"avg_dos":412.5,"avg_st":0.1152,"avg_fr":0.962},{"ym":"2017-02","stockout_pct":0.6395,"overstock_pct":0.8455,"avg_dos":396.75,"avg_st":0.1166,"avg_fr":0.9655},{"ym":"2017-03","stockout_pct":0.6733,"overstock_pct":0.7822,"avg_dos":270.0,"avg_st":0.1499,"avg_fr":0.9606},{"ym":"2017-04","stockout_pct":0.6876,"overstock_pct":0.7367,"avg_dos":205.4,"avg_st":0.1724,"avg_fr":0.9601},{"ym":"2017-05","stockout_pct":0.6699,"overstock_pct":0.7432,"avg_dos":185.15,"avg_st":0.1764,"avg_fr":0.9582},{"ym":"2017-06","stockout_pct":0.7132,"overstock_pct":0.6922,"avg_dos":157.0,"avg_st":0.1882,"avg_fr":0.9582},{"ym":"2017-07","stockout_pct":0.6641,"overstock_pct":0.8039,"avg_dos":270.0,"avg_st":0.1377,"avg_fr":0.9661},{"ym":"2017-08","stockout_pct":0.6557,"overstock_pct":0.7582,"avg_dos":212.6,"avg_st":0.1669,"avg_fr":0.9605},{"ym":"2017-09","stockout_pct":0.6667,"overstock_pct":0.785,"avg_dos":305.8,"avg_st":0.1407,"avg_fr":0.9621},{"ym":"2017-10","stockout_pct":0.6762,"overstock_pct":0.8161,"avg_dos":330.55,"avg_st":0.1363,"avg_fr":0.963},{"ym":"2017-11","stockout_pct":0.697,"overstock_pct":0.8323,"avg_dos":436.4,"avg_st":0.1252,"avg_fr":0.9532},{"ym":"2017-12","stockout_pct":0.6916,"overstock_pct":0.8193,"avg_dos":357.2,"avg_st":0.1304,"avg_fr":0.956},{"ym":"2018-01","stockout_pct":0.6347,"overstock_pct":0.8539,"avg_dos":540.0,"avg_st":0.1054,"avg_fr":0.9662},{"ym":"2018-02","stockout_pct":0.6607,"overstock_pct":0.8283,"avg_dos":414.0,"avg_st":0.1225,"avg_fr":0.9633},{"ym":"2018-03","stockout_pct":0.6816,"overstock_pct":0.7637,"avg_dos":270.0,"avg_st":0.1459,"avg_fr":0.9615},{"ym":"2018-04","stockout_pct":0.6982,"overstock_pct":0.7164,"avg_dos":213.85,"avg_st":0.1724,"avg_fr":0.9605},{"ym":"2018-05","stockout_pct":0.6851,"overstock_pct":0.7046,"avg_dos":191.25,"avg_st":0.1778,"avg_fr":0.9584},{"ym":"2018-06","stockout_pct":0.6527,"overstock_pct":0.6927,"avg_dos":180.0,"avg_st":0.1904,"avg_fr":0.9565},{"ym":"2018-07","stockout_pct":0.6757,"overstock_pct":0.7452,"avg_dos":230.05,"avg_st":0.1603,"avg_fr":0.9609},{"ym":"2018-08","stockout_pct":0.6667,"overstock_pct":0.7684,"avg_dos":224.0,"avg_st":0.1528,"avg_fr":0.9644},{"ym":"2018-09","stockout_pct":0.6373,"overstock_pct":0.8397,"avg_dos":410.0,"avg_st":0.1149,"avg_fr":0.968},{"ym":"2018-10","stockout_pct":0.6311,"overstock_pct":0.8689,"avg_dos":493.7,"avg_st":0.102,"avg_fr":0.9673},{"ym":"2018-11","stockout_pct":0.6765,"overstock_pct":0.9299,"avg_dos":682.5,"avg_st":0.0801,"avg_fr":0.9632},{"ym":"2018-12","stockout_pct":0.6688,"overstock_pct":0.8586,"avg_dos":442.0,"avg_st":0.1021,"avg_fr":0.9639},{"ym":"2019-01","stockout_pct":0.6416,"overstock_pct":0.8606,"avg_dos":624.45,"avg_st":0.0928,"avg_fr":0.9655},{"ym":"2019-02","stockout_pct":0.6611,"overstock_pct":0.8253,"avg_dos":480.0,"avg_st":0.1109,"avg_fr":0.9645},{"ym":"2019-03","stockout_pct":0.6639,"overstock_pct":0.8079,"avg_dos":396.5,"avg_st":0.1243,"avg_fr":0.9632},{"ym":"2019-04","stockout_pct":0.6699,"overstock_pct":0.7534,"avg_dos":295.9,"avg_st":0.1475,"avg_fr":0.9632},{"ym":"2019-05","stockout_pct":0.6888,"overstock_pct":0.7856,"avg_dos":355.9,"avg_st":0.141,"avg_fr":0.9607},{"ym":"2019-06","stockout_pct":0.6916,"overstock_pct":0.7931,"avg_dos":310.4,"avg_st":0.1365,"avg_fr":0.9623},{"ym":"2019-07","stockout_pct":0.6578,"overstock_pct":0.8135,"avg_dos":399.3,"avg_st":0.1218,"avg_fr":0.9659},{"ym":"2019-08","stockout_pct":0.6861,"overstock_pct":0.8008,"avg_dos":316.45,"avg_st":0.133,"avg_fr":0.9636},{"ym":"2019-09","stockout_pct":0.6327,"overstock_pct":0.8551,"avg_dos":502.05,"avg_st":0.1032,"avg_fr":0.9677},{"ym":"2019-10","stockout_pct":0.7152,"overstock_pct":0.8254,"avg_dos":490.7,"avg_st":0.1068,"avg_fr":0.9614},{"ym":"2019-11","stockout_pct":0.6492,"overstock_pct":0.8926,"avg_dos":742.5,"avg_st":0.087,"avg_fr":0.9666},{"ym":"2019-12","stockout_pct":0.6637,"overstock_pct":0.822,"avg_dos":512.1,"avg_st":0.1033,"avg_fr":0.9675},{"ym":"2020-01","stockout_pct":0.6423,"overstock_pct":0.8903,"avg_dos":780.0,"avg_st":0.0771,"avg_fr":0.9674},{"ym":"2020-02","stockout_pct":0.669,"overstock_pct":0.885,"avg_dos":656.25,"avg_st":0.0862,"avg_fr":0.9675},{"ym":"2020-03","stockout_pct":0.6707,"overstock_pct":0.813,"avg_dos":420.0,"avg_st":0.1208,"avg_fr":0.9647},{"ym":"2020-04","stockout_pct":0.6832,"overstock_pct":0.7637,"avg_dos":296.55,"avg_st":0.1507,"avg_fr":0.9586},{"ym":"2020-05","stockout_pct":0.6587,"overstock_pct":0.7601,"avg_dos":331.15,"avg_st":0.1369,"avg_fr":0.964},{"ym":"2020-06","stockout_pct":0.7044,"overstock_pct":0.7877,"avg_dos":414.5,"avg_st":0.1272,"avg_fr":0.964},{"ym":"2020-07","stockout_pct":0.6516,"overstock_pct":0.8033,"avg_dos":411.55,"avg_st":0.1186,"avg_fr":0.9676},{"ym":"2020-08","stockout_pct":0.6709,"overstock_pct":0.7715,"avg_dos":345.9,"avg_st":0.1317,"avg_fr":0.9669},{"ym":"2020-09","stockout_pct":0.6925,"overstock_pct":0.8323,"avg_dos":457.5,"avg_st":0.1085,"avg_fr":0.966},{"ym":"2020-10","stockout_pct":0.6449,"overstock_pct":0.8607,"avg_dos":665.6,"avg_st":0.0968,"avg_fr":0.9678},{"ym":"2020-11","stockout_pct":0.6716,"overstock_pct":0.8905,"avg_dos":740.0,"avg_st":0.0815,"avg_fr":0.967},{"ym":"2020-12","stockout_pct":0.639,"overstock_pct":0.8498,"avg_dos":635.0,"avg_st":0.0918,"avg_fr":0.9675},{"ym":"2021-01","stockout_pct":0.6737,"overstock_pct":0.8806,"avg_dos":840.0,"avg_st":0.0789,"avg_fr":0.966},{"ym":"2021-02","stockout_pct":0.6545,"overstock_pct":0.8364,"avg_dos":540.0,"avg_st":0.0986,"avg_fr":0.9669},{"ym":"2021-03","stockout_pct":0.657,"overstock_pct":0.7623,"avg_dos":380.0,"avg_st":0.1339,"avg_fr":0.9642},{"ym":"2021-04","stockout_pct":0.6807,"overstock_pct":0.6971,"avg_dos":274.6,"avg_st":0.1616,"avg_fr":0.9582},{"ym":"2021-05","stockout_pct":0.7088,"overstock_pct":0.7149,"avg_dos":290.2,"avg_st":0.155,"avg_fr":0.9585},{"ym":"2021-06","stockout_pct":0.7,"overstock_pct":0.7346,"avg_dos":270.0,"avg_st":0.1555,"avg_fr":0.9586},{"ym":"2021-07","stockout_pct":0.6575,"overstock_pct":0.7442,"avg_dos":356.5,"avg_st":0.1442,"avg_fr":0.9648},{"ym":"2021-08","stockout_pct":0.7105,"overstock_pct":0.7392,"avg_dos":330.0,"avg_st":0.1534,"avg_fr":0.9559},{"ym":"2021-09","stockout_pct":0.6444,"overstock_pct":0.7578,"avg_dos":402.5,"avg_st":0.1326,"avg_fr":0.9625},{"ym":"2021-10","stockout_pct":0.6488,"overstock_pct":0.7744,"avg_dos":421.9,"avg_st":0.1251,"avg_fr":0.963},{"ym":"2021-11","stockout_pct":0.6761,"overstock_pct":0.8226,"avg_dos":517.5,"avg_st":0.1097,"avg_fr":0.9655},{"ym":"2021-12","stockout_pct":0.6843,"overstock_pct":0.7594,"avg_dos":360.0,"avg_st":0.1363,"avg_fr":0.962},{"ym":"2022-01","stockout_pct":0.5825,"overstock_pct":0.8196,"avg_dos":540.0,"avg_st":0.1101,"avg_fr":0.9693},{"ym":"2022-02","stockout_pct":0.6808,"overstock_pct":0.7488,"avg_dos":390.0,"avg_st":0.1367,"avg_fr":0.9643},{"ym":"2022-03","stockout_pct":0.6814,"overstock_pct":0.7278,"avg_dos":282.95,"avg_st":0.1522,"avg_fr":0.9628},{"ym":"2022-04","stockout_pct":0.7016,"overstock_pct":0.6815,"avg_dos":228.95,"avg_st":0.174,"avg_fr":0.9579},{"ym":"2022-05","stockout_pct":0.6619,"overstock_pct":0.7134,"avg_dos":295.7,"avg_st":0.1584,"avg_fr":0.9647},{"ym":"2022-06","stockout_pct":0.6746,"overstock_pct":0.6961,"avg_dos":248.05,"avg_st":0.1583,"avg_fr":0.9639},{"ym":"2022-07","stockout_pct":0.6927,"overstock_pct":0.7488,"avg_dos":301.15,"avg_st":0.1393,"avg_fr":0.965},{"ym":"2022-08","stockout_pct":0.6529,"overstock_pct":0.7267,"avg_dos":267.0,"avg_st":0.1442,"avg_fr":0.9652},{"ym":"2022-09","stockout_pct":0.642,"overstock_pct":0.8115,"avg_dos":345.0,"avg_st":0.1187,"avg_fr":0.967},{"ym":"2022-10","stockout_pct":0.6553,"overstock_pct":0.8582,"avg_dos":383.6,"avg_st":0.1145,"avg_fr":0.9618},{"ym":"2022-11","stockout_pct":0.6968,"overstock_pct":0.8697,"avg_dos":500.0,"avg_st":0.1047,"avg_fr":0.9599},{"ym":"2022-12","stockout_pct":0.6722,"overstock_pct":0.8042,"avg_dos":378.35,"avg_st":0.1183,"avg_fr":0.9612}];
+
+mk('cDD','bar',{labels:['2 days','3 days','4 days','5 days','6 days','7 days','8 days','9 days','10 days'],datasets:[{label:'Orders',data:[23670,47107,70824,94546,94223,94647,70466,47082,23502],backgroundColor:['rgba(212,175,55,.3)','rgba(212,175,55,.4)','rgba(212,175,55,.55)','rgba(59,130,246,.7)',C.b,'rgba(59,130,246,.7)','rgba(212,175,55,.55)','rgba(212,175,55,.4)','rgba(212,175,55,.3)'],borderRadius:4,borderSkipped:false}]},{plugins:{legend:{display:false}},scales:{y:{ticks:{callback:function(v){return v===0?'':(v/1000).toFixed(0)+'K'}}}}});
+mk('cDVRat','line',{labels:['2 days','3 days','4 days','5 days','6 days','7 days','8 days','9 days','10 days'],datasets:[{label:'Avg Rating',data:[3.949,3.944,3.937,3.934,3.955,3.920,3.940,3.926,3.908],borderColor:C.b,backgroundColor:'rgba(212,175,55,.06)',fill:true,tension:.3,pointRadius:5,pointBackgroundColor:C.b,borderWidth:2}]},{plugins:{legend:{display:false}},scales:{y:{min:3.85,max:4.0,ticks:{callback:function(v){return v===0?'':v.toFixed(3)+'★'}}}}});
+mk('cRatDist','bar',{labels:['★1','★2','★3','★4','★5'],datasets:[{label:'Reviews',data:[5772,9095,17016,36412,45256],backgroundColor:['rgba(225,29,72,.7)','rgba(225,29,72,.5)','rgba(212,175,55,.5)',C.g,'rgba(13,148,136,.8)'],borderRadius:4,borderSkipped:false}]},{plugins:{legend:{display:false}},scales:{y:{ticks:{callback:function(v){return v===0?'':(v/1000).toFixed(0)+'K'}}}}});
+mk('cRatCat','bar',{labels:['Streetwear','Outdoor','Casual','GenZ'],datasets:[{label:'Avg Rating',data:[3.939,3.934,3.923,3.923],backgroundColor:[C.b,'rgba(13,148,136,.7)','rgba(212,175,55,.5)','rgba(59,130,246,.5)'],borderRadius:4,borderSkipped:false}]},{plugins:{legend:{display:false}},scales:{y:{min:3.88,max:3.96,ticks:{callback:function(v){return v===0?'':v.toFixed(3)}}}}});
+
+let invMode='so';
+const invC=mk('cInvMon','line',{
+  labels:INV_MON.map(d=>d.ym),
+  datasets:[
+    {label:'Stockout %',data:INV_MON.map(d=>+(d.stockout_pct*100).toFixed(1)),borderColor:C.r,backgroundColor:'rgba(225,29,72,.05)',fill:true,tension:.3,pointRadius:0,borderWidth:1.5,yAxisID:'y'},
+    {label:'Overstock %',data:INV_MON.map(d=>+(d.overstock_pct*100).toFixed(1)),borderColor:C.b,backgroundColor:'rgba(212,175,55,.05)',fill:true,tension:.3,pointRadius:0,borderWidth:1.5,yAxisID:'y'}
+  ]
+},{plugins:{legend:{position:'top'}},scales:{x:{ticks:{font:{size:9},maxTicksLimit:18}},y:{min:30,max:100,ticks:{callback:function(v){return v===0?'':v+'%'}}}}});
+
+function tglInv(mode,btn){
+  invMode=mode;
+  ['binvSO','binvDOS','binvST'].forEach(id=>document.getElementById(id).classList.remove('on'));
+  btn.classList.add('on');
+  if(mode==='so'){
+    invC.data.datasets=[
+      {label:'Stockout %',data:INV_MON.map(d=>+(d.stockout_pct*100).toFixed(1)),borderColor:C.r,backgroundColor:'rgba(225,29,72,.05)',fill:true,tension:.3,pointRadius:0,borderWidth:1.5,yAxisID:'y'},
+      {label:'Overstock %',data:INV_MON.map(d=>+(d.overstock_pct*100).toFixed(1)),borderColor:C.b,backgroundColor:'rgba(212,175,55,.05)',fill:true,tension:.3,pointRadius:0,borderWidth:1.5,yAxisID:'y'}
+    ];
+    invC.options.scales.y={min:30,max:100,ticks:{color:C.m,font:{size:10},callback:function(v){return v===0?'':v+'%'}},grid:{color:'rgba(45,51,66,.6)'}};
+  } else if(mode==='dos'){
+    invC.data.datasets=[{label:'Days of Supply (Median)',data:INV_MON.map(d=>d.avg_dos),borderColor:C.g,backgroundColor:'rgba(13,148,136,.05)',fill:true,tension:.3,pointRadius:0,borderWidth:2,yAxisID:'y'}];
+    invC.options.scales.y={ticks:{color:C.m,font:{size:10},callback:function(v){return v===0?'':v+' days'}},grid:{color:'rgba(45,51,66,.6)'}};
+  } else {
+    invC.data.datasets=[{label:'Sell-through Rate',data:INV_MON.map(d=>+(d.avg_st*100).toFixed(1)),borderColor:C.a,backgroundColor:'rgba(59,130,246,.05)',fill:true,tension:.3,pointRadius:0,borderWidth:2,yAxisID:'y'}];
+    invC.options.scales.y={min:0,max:35,ticks:{color:C.m,font:{size:10},callback:function(v){return v===0?'':v+'%'}},grid:{color:'rgba(45,51,66,.6)'}};
+  }
+  invC.data.labels=INV_MON.map(d=>d.ym);
+  invC.update();
+}
+
+mk('cInvCat','bar',{
+  labels:['Casual','GenZ','Outdoor','Streetwear'],
+  datasets:[
+    {label:'Stockout %',data:[66.2,68.3,67.3,67.3],backgroundColor:'rgba(225,29,72,.65)',borderRadius:2,borderSkipped:false},
+    {label:'Overstock %',data:[72.6,71.6,79.9,74.9],backgroundColor:'rgba(212,175,55,.6)',borderRadius:2,borderSkipped:false},
+    {label:'Fill Rate %',data:[96.2,96.2,96.3,96.0],backgroundColor:'rgba(13,148,136,.6)',borderRadius:2,borderSkipped:false},
+    {label:'Sell-through %',data:[16.8,16.8,13.5,16.0],backgroundColor:'rgba(59,130,246,.6)',borderRadius:2,borderSkipped:false}
+  ]
+},{plugins:{legend:{position:'top',labels:{font:{size:9},padding:6}}},scales:{y:{max:100,ticks:{callback:function(v){return v===0?'':v+'%'}}}}});
+
+mk('cInvF2','bar',{labels:['Casual','GenZ','Outdoor','Streetwear'],datasets:[{label:'Stockout %',data:[66.2,68.3,67.3,67.3],backgroundColor:'rgba(225,29,72,.6)',borderRadius:3,borderSkipped:false},{label:'Overstock %',data:[72.6,71.6,79.9,74.9],backgroundColor:'rgba(212,175,55,.6)',borderRadius:3,borderSkipped:false}]},{scales:{y:{max:90,ticks:{callback:function(v){return v===0?'':v+'%'}}}}});
+mk('cST2','bar',{labels:['Standard','Balanced','Trendy','All-weather','Performance','Everyday','Premium','Activewear'],datasets:[{label:'Sell-through %',data:[18.6,17.5,16.8,15.7,15.6,14.8,13.8,13.7],backgroundColor:[C.b,'rgba(212,175,55,.7)','rgba(212,175,55,.6)','rgba(212,175,55,.5)','rgba(212,175,55,.4)','rgba(212,175,55,.3)','rgba(212,175,55,.2)','rgba(212,175,55,.1)'],borderRadius:3,borderSkipped:false}]},{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{callback:function(v){return v===0?'':v+'%'}}},y:{ticks:{font:{size:10}}}}});
+
+// ══ TAB SWITCHING ══
+const tabs=document.querySelectorAll('.tab');
+const secs=document.querySelectorAll('.section');
+function go(i){tabs.forEach((t,j)=>t.classList.toggle('active',j===i));secs.forEach((s,j)=>s.classList.toggle('active',j===i));}
+</script>
+</body>
+</html>
